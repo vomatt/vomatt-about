@@ -1,0 +1,82 @@
+import '@/styles/global.css';
+
+import type { SanityImageSource } from '@sanity/image-url';
+import type { Metadata } from 'next';
+import { Geist, Geist_Mono } from 'next/font/google';
+
+import { buildShareImageUrl, imageBuilder } from '@/sanity/lib/image';
+import { sanityFetch } from '@/sanity/lib/live';
+import { siteSharingQuery } from '@/sanity/lib/queries';
+
+const geistSans = Geist({ subsets: ['latin'], variable: '--font-geist-sans' });
+const geistMono = Geist_Mono({
+	subsets: ['latin'],
+	variable: '--font-geist-mono',
+});
+
+export async function generateMetadata(): Promise<Metadata> {
+	const data = await sanityFetch({ query: siteSharingQuery })
+		.then(({ data }) => data)
+		.catch((error) => {
+			console.error('Failed to load site settings from Sanity', error);
+			return null;
+		});
+	const { siteTitle = '', favicon, faviconLight, shareGraphic, shareVideo } =
+		data || {};
+
+	const faviconUrl = (icon: SanityImageSource) =>
+		imageBuilder.image(icon).width(256).height(256).url();
+	// A favicon set in Sanity wins; without one, the icon files in app/ apply
+	const siteFaviconUrl = favicon ? faviconUrl(favicon) : null;
+	const siteFaviconLightUrl = faviconLight
+		? faviconUrl(faviconLight)
+		: siteFaviconUrl;
+	const shareGraphicUrl = shareGraphic?.asset
+		? buildShareImageUrl(shareGraphic.asset)
+		: null;
+
+	return {
+		metadataBase: new URL(process.env.SITE_URL || ''),
+		title: {
+			template: `%s | ${siteTitle}`,
+			default: siteTitle,
+		},
+		creator: siteTitle,
+		publisher: siteTitle,
+		applicationName: siteTitle,
+		openGraph: {
+			title: siteTitle,
+			images: shareGraphicUrl
+				? [{ url: shareGraphicUrl, width: 1200, height: 630 }]
+				: [],
+			videos: shareVideo
+				? [{ url: shareVideo, width: 1200, height: 630, type: 'video/mp4' }]
+				: [],
+			siteName: siteTitle,
+			locale: 'en_US',
+			type: 'website',
+		},
+		icons: siteFaviconUrl
+			? {
+					icon: [
+						{ url: siteFaviconUrl, media: '(prefers-color-scheme: light)' },
+						{
+							url: siteFaviconLightUrl ?? siteFaviconUrl,
+							media: '(prefers-color-scheme: dark)',
+						},
+					],
+				}
+			: undefined,
+	};
+}
+
+export default function RootLayout({ children }: LayoutProps<'/'>) {
+	return (
+		<html
+			lang="en"
+			className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+		>
+			<body className="font-sans">{children}</body>
+		</html>
+	);
+}

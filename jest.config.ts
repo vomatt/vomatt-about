@@ -1,0 +1,28 @@
+import type { Config } from 'jest';
+import nextJest from 'next/jest.js';
+
+const createJestConfig = nextJest({ dir: './' });
+
+const config: Config = {
+	coverageProvider: 'v8',
+	testEnvironment: 'jsdom',
+	setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
+	moduleNameMapper: {
+		'^@/(.*)$': '<rootDir>/src/$1',
+	},
+	testMatch: ['<rootDir>/src/**/__tests__/**/*.test.{ts,tsx}'],
+};
+
+// @sanity/image-url and groq ship ESM only, so let next/jest transform it
+const jestConfig = async () => {
+	const resolved = await createJestConfig(config)();
+	return {
+		...resolved,
+		transformIgnorePatterns: (resolved.transformIgnorePatterns ?? []).map(
+			(pattern) =>
+				pattern.replace('(?!(geist|', '(?!(@sanity/image-url|groq|geist|')
+		),
+	};
+};
+
+export default jestConfig;
