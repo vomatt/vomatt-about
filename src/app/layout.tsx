@@ -4,6 +4,8 @@ import type { SanityImageSource } from '@sanity/image-url';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 
+import { CookieConsent } from '@/components/CookieConsent';
+import { SiteFooter, SiteHeader } from '@/components/SiteChrome';
 import { buildShareImageUrl, imageBuilder } from '@/sanity/lib/image';
 import { sanityFetch } from '@/sanity/lib/live';
 import { siteSharingQuery } from '@/sanity/lib/queries';
@@ -14,13 +16,17 @@ const geistMono = Geist_Mono({
 	variable: '--font-geist-mono',
 });
 
-export async function generateMetadata(): Promise<Metadata> {
-	const data = await sanityFetch({ query: siteSharingQuery })
+// The site still renders when Sanity is down, without its title and analytics
+const getSiteSettings = () =>
+	sanityFetch({ query: siteSharingQuery })
 		.then(({ data }) => data)
 		.catch((error) => {
 			console.error('Failed to load site settings from Sanity', error);
 			return null;
 		});
+
+export async function generateMetadata(): Promise<Metadata> {
+	const data = await getSiteSettings();
 	const { siteTitle = '', favicon, faviconLight, shareGraphic, shareVideo } =
 		data || {};
 
@@ -70,13 +76,22 @@ export async function generateMetadata(): Promise<Metadata> {
 	};
 }
 
-export default function RootLayout({ children }: LayoutProps<'/'>) {
+export default async function RootLayout({ children }: LayoutProps<'/'>) {
+	const settings = await getSiteSettings();
+
 	return (
 		<html
 			lang="en"
 			className={`${geistSans.variable} ${geistMono.variable} antialiased`}
 		>
-			<body className="font-sans">{children}</body>
+			<body className="flex min-h-svh flex-col font-sans text-foreground">
+				<SiteHeader />
+				<main id="main" className="w-full flex-1 px-contain pt-8 pb-16">
+					<div className="mx-auto w-full max-w-main">{children}</div>
+				</main>
+				<SiteFooter />
+				<CookieConsent integrations={settings?.integrations} />
+			</body>
 		</html>
 	);
 }

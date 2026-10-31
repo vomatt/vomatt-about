@@ -31,25 +31,6 @@ const linkFields = defineQuery(`
 	isNewTab
 `);
 
-const menuFields = defineQuery(`
-	_key,
-	_type,
-	title,
-	items[]{
-		title,
-		link {
-			${linkFields}
-		},
-		dropdownItems[]{
-			_key,
-			title,
-			link {
-				${linkFields}
-			}
-		}
-	}
-`);
-
 export const imageMetaFields = defineQuery(`
 	asset,
 	crop,
@@ -189,69 +170,6 @@ const pageModuleFields = defineQuery(`
 		showGradient,
 		"gradientColor": gradientColor->color.hex,
 		isMerged
-	}
-`);
-
-// Site configuration with caching recommendation
-export const siteDataQuery = defineQuery(`{
-		"announcement": *[_type == "gAnnouncement"][0]{
-			display,
-			messages,
-			autoplay,
-			autoplayInterval,
-			backgroundColor,
-			textColor,
-			emphasizeColor,
-			"link": ${linkFields}
-		},
-		"header": *[_type == "gHeader"][0]{
-			"menu": menu->{
-				${menuFields}
-			}
-		},
-		"footer": *[_type == "gFooter"][0]{
-			"menu": menu->{
-				${menuFields}
-			},
-			"menuLegal": menuLegal->{
-				${menuFields}
-			}
-		},
-		"sharing": *[_type == "settingsGeneral"][0]{
-			siteTitle,
-			shareGraphic,
-			'shareVideo': shareVideo.asset->url,
-			favicon,
-			faviconLight
-		},
-		"integrations": *[_type == "settingsIntegration"][0]{
-			gaIDs,
-			gtmIDs
-		},
-	}
-`);
-
-// Page queries
-export const pageHomeQuery = defineQuery(`
-	*[_type == "pHome"][0]{
-		${baseFields},
-		"isHomepage": true,
-		pageModules[]{
-			${pageModuleFields}
-		}
-	}
-`);
-
-export const page404Query = defineQuery(`
-	*[_type == "p404" && _id == "p404"][0]{
-		${baseFields},
-		heading,
-		paragraph[]{
-			${portableTextContentFields}
-		},
-		callToAction{
-			${callToActionFields}
-		}
 	}
 `);
 

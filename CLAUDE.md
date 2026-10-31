@@ -25,7 +25,14 @@ import { pageGeneralQuery } from '@/sanity/lib/queries'
 const { data } = await sanityFetch({ query: pageGeneralQuery, params: { slug } })
 ```
 
-`sanityFetch` is a `'use cache'` function: one request returns the content and its Sanity sync tags, which it tags as `sanity:<syncTag>` (or `sanity:untracked` when there are none or more than 128). In production with `SANITY_REVALIDATE_SECRET` set it refreshes hourly as a fallback to publish expiry; elsewhere every 60s.
+`sanityFetch` is a `'use cache'` function: one request returns the content and its Sanity sync tags, which it tags as `sanity:<syncTag>` (or `sanity:untracked` when there are none or more than 128). In production with `SANITY_REVALIDATE_SECRET` set it refreshes hourly as a fallback to publish expiry; elsewhere every 60s. On publish, vomatt-admin's `invalidate-tags` Sanity Function POSTs `{ syncTags }` to `/api/revalidate`, which expires those tags and `sanity:untracked` with `{ expire: 0 }`.
+
+### Routes
+
+- `/[slug]` renders a `pGeneral` page (`src/components/PageGeneral.tsx`): `editor` layout is Portable Text, `modules` layout is the page builder (`src/components/PageModules.tsx`). Every published slug is prerendered; `instant = false` lets an unknown slug block and return a real 404.
+- `/` redirects to `/about` (`next.config.ts`) until `pHome` has modules. `gHeader`, `gFooter`, `gAnnouncement` and `p404` are empty in Sanity, so the header, footer links (`src/components/SiteChrome.tsx`) and 404 are static. Carousel and marquee modules aren't ported (embla 6 needs React 17).
+- Links: an internal Sanity reference stays on this site; an external link with a relative URL (`/explore`, `/login`) is a vomatt-web route and goes to `NEXT_PUBLIC_APP_URL` (`src/components/CMSLink.tsx`).
+- Cookie consent (`src/components/CookieConsent.tsx`) sets its cookie on `vomatt.com` in production so the app and this site share one answer, and renders nothing until `settingsIntegration` has an analytics ID.
 
 ## UI
 
@@ -33,4 +40,4 @@ Before UI work read `DESIGN.md` and `PRODUCT.md`. Both are copied from vomatt-we
 
 ## Environment Variables
 
-See `.env.example`: `NEXT_PUBLIC_SANITY_PROJECT_ID`, `NEXT_PUBLIC_SANITY_DATASET`, `SITE_URL` (no trailing slash).
+See `.env.example`: `NEXT_PUBLIC_SANITY_PROJECT_ID`, `NEXT_PUBLIC_SANITY_DATASET`, `SITE_URL` and `NEXT_PUBLIC_APP_URL` (origins, no trailing slash), `SANITY_REVALIDATE_SECRET` (production only).
