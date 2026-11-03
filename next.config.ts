@@ -24,10 +24,6 @@ const nextConfig: NextConfig = {
 		],
 	},
 	poweredByHeader: false,
-	async redirects() {
-		// About is the front page until the Homepage (pHome) gets modules in Sanity
-		return [{ source: '/', destination: '/about', permanent: false }];
-	},
 	async headers() {
 		return [
 			{

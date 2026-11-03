@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g stroke="oklch(0.205 0.014 265)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none">
+<path d="M40 27 q-3 -4 0 -8 q3 -4 0 -8 M60 27 q3 -4 0 -8 q-3 -4 0 -8" stroke-width="2.4" stroke="oklch(0.47 0.014 265)"/>
+<path d="M18 72 C18 54 33 40 50 36 C67 40 82 54 82 72 C70 79 30 79 18 72 Z" fill="oklch(0.995 0.002 265)" stroke="oklch(0.205 0.014 265)" stroke-width="2.6"/>
+<circle cx="50" cy="35" r="4" fill="oklch(0.995 0.002 265)" stroke="oklch(0.205 0.014 265)" stroke-width="2.6"/>
+<path d="M50 39 L39 51 M50 39 L45.5 52 M50 39 L54.5 52 M50 39 L61 51" stroke="oklch(0.47 0.014 265)" stroke-width="2.2"/>
+<circle cx="41" cy="62" r="3.4" fill="oklch(0.205 0.014 265)" stroke="none"/><circle cx="59" cy="62" r="3.4" fill="oklch(0.205 0.014 265)" stroke="none"/>
+<path d="M45 68 q2.5 2.5 5 0 q2.5 2.5 5 0" stroke="oklch(0.205 0.014 265)" stroke-width="2.6"/>
+<circle cx="33.3" cy="68" r="3" fill="oklch(0.82 0.045 52.7)" stroke="none"/><circle cx="66.7" cy="68" r="3" fill="oklch(0.82 0.045 52.7)" stroke="none"/>
+</g></svg>
