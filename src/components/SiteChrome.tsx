@@ -29,10 +29,10 @@ export function SiteFooter() {
 		<footer className="border-t border-border">
 			<nav
 				aria-label="Legal"
-				className="mx-auto flex max-w-main flex-wrap gap-x-5 gap-y-2 px-contain py-8 text-[14px] text-muted-foreground wide-frame:max-w-page"
+				className="mx-auto flex max-w-main flex-wrap gap-x-5 px-contain py-5 text-[14px] text-muted-foreground wide-frame:max-w-page"
 			>
 				{FOOTER_LINKS.map(({ href, label }) => (
-					<Link key={href} href={href} className="hover:text-foreground">
+					<Link key={href} href={href} className="inline-flex min-h-11 items-center hover:text-foreground">
 						{label}
 					</Link>
 				))}
