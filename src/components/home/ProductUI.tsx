@@ -78,7 +78,7 @@ export function ElectedStamp({ className }: { className?: string }) {
 }
 
 /** "your vote" on the viewer's result row. Lower-case on purpose. */
-export function YourVotePill({ className }: { className?: string }) {
+export function YourVotePill({ label, className }: { label: string; className?: string }) {
 	return (
 		<span
 			className={cn(
@@ -86,19 +86,29 @@ export function YourVotePill({ className }: { className?: string }) {
 				className
 			)}
 		>
-			your vote
+			{label}
 		</span>
 	);
 }
 
 /** The notification a voter gets when a poll closes: a Tide row, as in the app's unread list. */
-export function ResultsNotice({ title, meta, className }: { title: string; meta: string; className?: string }) {
+export function ResultsNotice({
+	label,
+	title,
+	meta,
+	className,
+}: {
+	label: string;
+	title: string;
+	meta: string;
+	className?: string;
+}) {
 	return (
 		<div className={cn('flex items-center gap-3.5 rounded-xl border border-tide-line bg-tide-tint px-4 py-3.5', className)}>
 			<SealMark />
 			<div className="flex min-w-0 flex-1 flex-col gap-0.5">
 				<p className="text-[15px] leading-snug text-foreground">
-					<span className="font-semibold">Results are in</span> · {title}
+					<span className="font-semibold">{label}</span> · {title}
 				</p>
 				<p className="text-[12px] text-tide-foreground tabular-nums">{meta}</p>
 			</div>

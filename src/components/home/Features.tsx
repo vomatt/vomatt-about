@@ -1,9 +1,12 @@
 import type { ReactNode } from 'react';
 
 import { KeyRound, RefreshCw, Reply } from '@/components/ui/SvgIcons';
+import { type Locale, LOCALES, locales } from '@/i18n/locales';
+import { formatCount, MESSAGES } from '@/i18n/messages';
 import { cn } from '@/lib/utils';
 
-import { formatCount, POLL } from './poll';
+import type { HomeContent } from './content';
+import { POLL, pollIn } from './poll';
 import { Avatar, BallotMark, ResultsNotice } from './ProductUI';
 import { SectionHeading } from './shared';
 
@@ -34,133 +37,119 @@ function Pill({ pressed = false, children }: { pressed?: boolean; children: Reac
 	);
 }
 
-const FEATURES: { title: ReactNode; body: string; specimen: ReactNode }[] = [
-	{
-		title: 'Change your mind until it closes',
-		body: 'Pick another option to update your vote, or withdraw it. Only your last vote counts, and it stays sealed.',
-		specimen: (
-			<div className="flex w-full flex-col gap-2">
-				<OptionRow text="Thursday" />
-				<OptionRow text="Friday" selected />
-				<span className="flex items-center gap-2 text-[12px] text-muted-foreground">
-					<RefreshCw className="size-3.5 shrink-0 text-input" />
-					Replaces your vote for Thursday
-				</span>
+/** The mock beside each feature, paired with pHome.features.items by index. */
+function specimens(locale: Locale): ReactNode[] {
+	const poll = pollIn(locale);
+	const { features: copy, notice } = MESSAGES[locale].home;
+	const [before, mention, after] = copy.comment;
+	return [
+		<div key="vote" className="flex w-full flex-col gap-2">
+			<OptionRow text={poll.options[0].text} />
+			<OptionRow text={poll.options[1].text} selected />
+			<span className="flex items-center gap-2 text-[12px] text-muted-foreground">
+				<RefreshCw className="size-3.5 shrink-0 text-input" />
+				{copy.replaces(poll.options[0].text)}
+			</span>
+		</div>,
+		<div key="discuss" className="flex w-full gap-2.5">
+			<Avatar name="boba" className="size-7" />
+			<div className="flex min-w-0 flex-col gap-1 text-[13px] leading-snug">
+				<p>
+					<span className="font-medium text-foreground">{copy.commentAuthor}</span>{' '}
+					<span className="text-muted-foreground">{copy.commentAge}</span>
+				</p>
+				<p className="text-foreground">
+					{before}
+					<span className="font-medium">{mention}</span>
+					{after}
+				</p>
+				<p className="flex items-center gap-1.5 text-[12px] text-muted-foreground">
+					<Reply className="size-3.5" />
+					{copy.replies}
+				</p>
 			</div>
-		),
-	},
-	{
-		title: 'Talk it through',
-		body: 'Explain your choice in the discussion under each poll. Reply to others, and @mention people to bring them in.',
-		specimen: (
-			<div className="flex w-full gap-2.5">
-				<Avatar name="boba" className="size-7" />
-				<div className="flex min-w-0 flex-col gap-1 text-[13px] leading-snug">
-					<p>
-						<span className="font-medium text-foreground">@mina</span>{' '}
-						<span className="text-muted-foreground">· 2h</span>
-					</p>
-					<p className="text-foreground">
-						Friday, so the stalls can stay open late. <span className="font-medium">@jtan</span> would that work for
-						you?
-					</p>
-					<p className="flex items-center gap-1.5 text-[12px] text-muted-foreground">
-						<Reply className="size-3.5" />
-						Reply · 3 replies
-					</p>
+		</div>,
+		<div key="follow" className="flex w-full flex-col gap-3">
+			<div className="flex items-center gap-2.5">
+				<Avatar name="corgi" />
+				<div className="flex min-w-0 flex-1 flex-col">
+					<span className="truncate text-[14px] font-medium text-foreground">{copy.followName}</span>
+					<span className="truncate text-[12px] text-muted-foreground tabular-nums">{copy.followMeta}</span>
 				</div>
+				<Pill pressed>{copy.follow}</Pill>
 			</div>
-		),
-	},
-	{
-		title: 'Follow people and topics',
-		body: 'Polls from people you follow join your Following feed. Following never shows anyone how you voted.',
-		specimen: (
-			<div className="flex w-full flex-col gap-3">
-				<div className="flex items-center gap-2.5">
-					<Avatar name="corgi" />
-					<div className="flex min-w-0 flex-1 flex-col">
-						<span className="truncate text-[14px] font-medium text-foreground">Jun Tan</span>
-						<span className="truncate text-[12px] text-muted-foreground tabular-nums">@jtan · 128 followers</span>
-					</div>
-					<Pill pressed>Follow</Pill>
-				</div>
-				<div className="flex flex-wrap gap-1.5">
-					<Pill pressed>Neighbourhood</Pill>
-					<Pill>Markets</Pill>
-				</div>
+			<div className="flex flex-wrap gap-1.5">
+				<Pill pressed>{copy.topics[0]}</Pill>
+				<Pill>{copy.topics[1]}</Pill>
 			</div>
-		),
-	},
-	{
-		title: 'Hear when results are in',
-		body: 'When a poll you voted on closes, a notification brings you the result.',
-		specimen: (
-			<ResultsNotice title={POLL.title} meta={`Thursday won · ${formatCount(POLL.turnout)} voted · now`} className="w-full" />
-		),
-	},
-	{
-		title: 'No password to remember',
-		body: 'Sign in with a passkey on your device, or with a code we send to your email.',
-		specimen: (
-			<div className="flex w-full flex-col items-center gap-2.5">
-				<span className="flex h-10 w-full items-center justify-center gap-2 rounded-(--radius) border border-border-strong bg-card text-[14px] font-medium text-foreground">
-					<KeyRound className="size-4" />
-					Continue with a passkey
-				</span>
-				<span className="flex gap-1.5">
-					{['4', '8', '1', '2', '0', '7'].map((digit, index) => (
-						<span
-							key={index}
-							className="grid h-9 w-7 place-items-center rounded-lg border border-input bg-card text-[15px] text-foreground tabular-nums"
-						>
-							{digit}
-						</span>
-					))}
-				</span>
-			</div>
-		),
-	},
-	{
-		title: (
-			<>
-				English and <span lang="zh-Hant">繁體中文</span>
-			</>
-		),
-		body: 'Use vomatt in English or Traditional Chinese, and switch whenever you like.',
-		specimen: (
-			<div className="flex w-full flex-col gap-2.5">
-				<span className="inline-flex self-start rounded-full bg-field p-0.5 text-[12px] font-medium">
-					<span className="rounded-full bg-card px-3 py-1 text-foreground shadow-sm">English</span>
-					<span lang="zh-Hant" className="px-3 py-1 text-muted-foreground">
-						繁體中文
+		</div>,
+		<ResultsNotice
+			key="notify"
+			label={notice.title}
+			title={poll.title}
+			meta={notice.meta(poll.winner, formatCount(locale, POLL.turnout))}
+			className="w-full"
+		/>,
+		<div key="passkey" className="flex w-full flex-col items-center gap-2.5">
+			<span className="flex h-10 w-full items-center justify-center gap-2 rounded-(--radius) border border-border-strong bg-card text-[14px] font-medium text-foreground">
+				<KeyRound className="size-4" />
+				{copy.passkey}
+			</span>
+			<span className="flex gap-1.5">
+				{['4', '8', '1', '2', '0', '7'].map((digit, index) => (
+					<span
+						key={index}
+						className="grid h-9 w-7 place-items-center rounded-lg border border-input bg-card text-[15px] text-foreground tabular-nums"
+					>
+						{digit}
 					</span>
+				))}
+			</span>
+		</div>,
+		// The poll in this page's language first, then in the other
+		<div key="languages" className="flex w-full flex-col gap-2.5">
+			<span className="inline-flex self-start rounded-full bg-field p-0.5 text-[12px] font-medium">
+				{locales.map((other) => (
+					<span
+						key={other}
+						lang={LOCALES[other].htmlLang}
+						className={
+							other === locale ? 'rounded-full bg-card px-3 py-1 text-foreground shadow-sm' : 'px-3 py-1 text-muted-foreground'
+						}
+					>
+						{LOCALES[other].label}
+					</span>
+				))}
+			</span>
+			{[locale, ...locales.filter((other) => other !== locale)].map((other) => (
+				<span
+					key={other}
+					lang={LOCALES[other].htmlLang}
+					className={cn(
+						'text-[15px] leading-snug font-medium',
+						other === locale ? 'text-foreground' : 'text-muted-foreground'
+					)}
+				>
+					{pollIn(other).title}
 				</span>
-				<span className="text-[15px] leading-snug font-medium text-foreground">{POLL.title}</span>
-				<span lang="zh-Hant" className="text-[15px] leading-snug font-medium text-muted-foreground">
-					市集要改到哪一晚？
-				</span>
-			</div>
-		),
-	},
-];
+			))}
+		</div>,
+	];
+}
 
-export function Features() {
+export function Features({ content, locale }: { content: HomeContent['features']; locale: Locale }) {
+	const mocks = specimens(locale);
 	return (
 		<section aria-labelledby="features-title" className="flex flex-col gap-10">
-			<SectionHeading
-				id="features-title"
-				eyebrow="Around the ballot"
-				title="Everything a fair poll needs, nothing it doesn’t"
-			/>
+			<SectionHeading id="features-title" eyebrow={content.eyebrow} title={content.heading} intro={content.intro} />
 			<ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-				{FEATURES.map((feature, index) => (
+				{content.items.map((feature, index) => (
 					<li
 						key={index}
 						className="home-reveal flex flex-col gap-4 rounded-2xl border border-border bg-card p-4 pb-5"
 					>
 						<div aria-hidden className="flex min-h-36 items-center rounded-xl bg-surface-soft p-4">
-							{feature.specimen}
+							{mocks[index]}
 						</div>
 						<div className="flex flex-col gap-1.5 px-1">
 							<h3 className="item-title leading-[1.4] text-foreground">{feature.title}</h3>
