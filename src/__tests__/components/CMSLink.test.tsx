@@ -29,4 +29,9 @@ describe('CMSLink', () => {
 	it('leaves an absolute external link as it is', () => {
 		expect(hrefOf({ linkType: 'external', href: 'https://example.com' })).toBe('https://example.com');
 	});
+
+	it('is named by its visible text, not its destination', () => {
+		render(<CMSLink link={{ _type: 'link', isNewTab: false, linkType: 'internal', href: '/cookies-policy' }}>Cookies Policy</CMSLink>);
+		expect(screen.getByRole('link', { name: 'Cookies Policy' })).toBeInTheDocument();
+	});
 });

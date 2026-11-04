@@ -1,0 +1,406 @@
+/*
+ * The homepage's states and motion, imported by app/page.tsx only. Plain CSS with home- names: the
+ * Turbopack rule in next.config.ts reads every .css file as global, so CSS modules aren't available.
+ * What each state looks like applies everywhere; how it moves between states sits under
+ * prefers-reduced-motion: no-preference, so with reduced motion every state shows at once.
+ * Only opacity and transforms move (and a few slots inside the card), so nothing shifts the page.
+ */
+
+/* Children share one grid cell, so swapping them never changes the size */
+.home-stack {
+	display: grid;
+}
+.home-stack > * {
+	grid-area: 1 / 1;
+}
+
+/* ── The poll card in each step ─────────────────────────────────────────────
+   data-step: 0 the creator's empty form, 1 asked, 2 voted and sealed, 3 closed and revealed */
+
+.home-placeholder,
+.home-question,
+.home-option-text,
+.home-chip,
+.home-voted,
+.home-vote-row,
+.home-seal-row,
+.home-caption,
+.home-footer-text,
+.home-stamp,
+.home-your-vote,
+.home-percent,
+.home-notice,
+.home-check {
+	opacity: 0;
+}
+.home-question,
+.home-option-text {
+	translate: 0 6px;
+}
+.home-vote-row,
+.home-seal-row,
+.home-caption {
+	translate: 0 4px;
+}
+.home-voted,
+.home-your-vote {
+	scale: 0.85;
+}
+.home-check {
+	scale: 0.4;
+}
+.home-stamp {
+	scale: 1.6;
+}
+.home-notice {
+	translate: 0 -8px;
+}
+
+.home-mock[data-step='0'] .home-placeholder,
+.home-mock:not([data-step='0']) :is(.home-question, .home-option-text, .home-footer-text),
+.home-mock:not([data-step='0']) .home-chip,
+.home-mock[data-step='1'] .home-vote-row,
+.home-mock[data-step='2'] :is(.home-voted, .home-seal-row, .home-check),
+.home-mock[data-step='3'] :is(.home-caption, .home-stamp, .home-your-vote, .home-percent, .home-notice) {
+	opacity: 1;
+	translate: none;
+	scale: none;
+}
+.home-mock[data-step='3'] .home-mark {
+	opacity: 0;
+}
+
+/* Room for a pill that only some steps show (Voted in the header, your vote on the result): none until then */
+.home-slot {
+	display: grid;
+	grid-template-columns: 0fr;
+}
+.home-slot > * {
+	min-width: 0;
+	overflow: hidden;
+}
+.home-mock[data-step='2'] .home-slot-voted,
+.home-mock[data-step='3'] .home-slot-mine {
+	grid-template-columns: 1fr;
+}
+
+/* The ballot mark's room at the start of a row. A result row has no mark, so it gives the room back;
+   the winner keeps enough for its stamp. The mark beyond a shrunk column is already faded out */
+.home-lead {
+	display: grid;
+	grid-template-columns: 22px;
+	margin-right: 0.875rem;
+}
+.home-mock[data-step='3'] .home-lead {
+	grid-template-columns: 0px;
+	margin-right: 0;
+}
+.home-mock[data-step='3'] .home-lead-winner {
+	grid-template-columns: 18px;
+	margin-right: 0.75rem;
+}
+
+/* A row's line: dashed while it is still an empty field in the form */
+.home-row-frame {
+	position: absolute;
+	inset: 0;
+	border: 1px solid var(--border);
+	border-radius: inherit;
+}
+.home-mock[data-step='0'] .home-row-frame {
+	border-style: dashed;
+	border-color: var(--border-strong);
+}
+
+/* The result bar: one neutral for every option; the winner is marked by its stamp, not its fill */
+.home-bar {
+	position: absolute;
+	inset: 0;
+	background-color: var(--muted);
+	transform-origin: left;
+	scale: 0 1;
+}
+.home-mock[data-step='3'] .home-bar {
+	scale: var(--share) 1;
+}
+
+/* The viewer's option: the Volt tint and an ink line once chosen; on the result, the line alone */
+.home-chosen {
+	position: absolute;
+	inset: 0;
+	border: 1.5px solid var(--primary);
+	border-radius: inherit;
+	background-color: var(--highlight-tint);
+	opacity: 0;
+}
+.home-mock:is([data-step='2'], [data-step='3']) .home-chosen {
+	opacity: 1;
+}
+.home-mock[data-step='3'] .home-chosen {
+	border-color: var(--foreground);
+	background-color: transparent;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.home-mock :is(.home-placeholder, .home-question, .home-option-text, .home-chip, .home-voted, .home-vote-row, .home-seal-row, .home-caption, .home-footer-text, .home-mark, .home-check, .home-stamp, .home-your-vote, .home-percent, .home-notice) {
+		transition-property: opacity, translate, scale;
+		transition-duration: 220ms;
+		transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+	}
+	.home-chosen {
+		transition:
+			opacity 200ms ease-out,
+			background-color 300ms ease-out,
+			border-color 300ms ease-out;
+	}
+	.home-bar {
+		transition: scale 800ms cubic-bezier(0.22, 1, 0.36, 1);
+	}
+	.home-slot,
+	.home-lead {
+		transition:
+			grid-template-columns 260ms cubic-bezier(0.22, 1, 0.36, 1),
+			margin-right 260ms cubic-bezier(0.22, 1, 0.36, 1);
+	}
+	.home-mock .home-chip {
+		transition-property: opacity, translate, scale, background-color;
+	}
+	.home-mock[data-step='2'] .home-slot {
+		transition-delay: 200ms;
+	}
+	.home-mock[data-step='3'] .home-slot {
+		transition-delay: 600ms;
+	}
+
+	/* Asked: the question, then each option, then what the card offers */
+	.home-mock[data-step='1'] .home-question {
+		transition-duration: 360ms;
+		transition-delay: 80ms;
+	}
+	.home-mock[data-step='1'] .home-option-text {
+		transition-duration: 320ms;
+		transition-delay: calc(240ms + var(--i) * 90ms);
+	}
+	.home-mock[data-step='1'] :is(.home-chip, .home-vote-row, .home-footer-text) {
+		transition-duration: 320ms;
+		transition-delay: 560ms;
+	}
+
+	/* Voted: the mark inks in, then the Voted pill and the seal */
+	.home-mock[data-step='2'] .home-check {
+		transition-duration: 260ms;
+		transition-delay: 60ms;
+	}
+	.home-mock[data-step='2'] .home-voted {
+		transition-delay: 260ms;
+	}
+	.home-mock[data-step='2'] .home-seal-row {
+		transition-duration: 320ms;
+		transition-delay: 340ms;
+	}
+
+	/* Revealed: the bars fill one after another, the stamp lands on the winner, then the notification */
+	.home-mock[data-step='3'] :is(.home-bar, .home-percent) {
+		transition-delay: calc(120ms + var(--i) * 80ms);
+	}
+	.home-mock[data-step='3'] .home-caption {
+		transition-delay: 600ms;
+	}
+	.home-mock[data-step='3'] .home-your-vote {
+		transition-delay: 700ms;
+	}
+	.home-mock[data-step='3'] .home-stamp {
+		transition-duration: 300ms;
+		transition-delay: 900ms;
+	}
+	.home-mock[data-step='3'] .home-notice {
+		transition-duration: 400ms;
+		transition-delay: 1100ms;
+	}
+}
+
+/* ── How it works ───────────────────────────────────────────────────────────
+   By default each step carries its own card. On a wide screen with scripting and motion, one card
+   stays beside the steps (the stage) and moves through them as they scroll past. */
+
+.home-steps {
+	display: flex;
+	flex-direction: column;
+	gap: 3rem;
+}
+.home-step-list {
+	display: flex;
+	flex-direction: column;
+	gap: 4rem;
+}
+.home-step {
+	display: grid;
+	gap: 1.5rem;
+}
+.home-step-number {
+	transition:
+		background-color 200ms,
+		border-color 200ms,
+		color 200ms;
+}
+.home-stage {
+	display: none;
+}
+
+@media (width >= 64rem) {
+	.home-step {
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+		align-items: center;
+		column-gap: 4rem;
+	}
+}
+
+@media (width >= 64rem) and (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+	.home-scroller {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+		column-gap: 4rem;
+	}
+	.home-steps {
+		gap: 15vh;
+	}
+	.home-step-list {
+		gap: 0;
+	}
+	/* The numbers sit in a gutter, joined by a line down to the next one */
+	.home-step {
+		position: relative;
+		display: block;
+		min-height: 72vh;
+		padding-left: 3.5rem;
+	}
+	.home-step:last-child {
+		min-height: 88vh;
+	}
+	.home-step-number {
+		position: absolute;
+		top: 0;
+		left: 0;
+	}
+	.home-step:not(:last-child)::before,
+	.home-step:not(:last-child)::after {
+		content: '';
+		position: absolute;
+		top: 2.5rem;
+		bottom: 0.5rem;
+		left: calc(1rem - 0.5px);
+		width: 1px;
+		background-color: var(--border-strong);
+	}
+	/* The ink fills the line as the step scrolls up past the stage's trigger line (60% down) */
+	.home-step:not(:last-child)::after {
+		background-color: var(--primary);
+		transform-origin: top;
+		scale: 1 0;
+	}
+	.home-step[data-reached] .home-step-number {
+		border-color: var(--primary);
+		background-color: var(--primary);
+		color: var(--primary-foreground);
+	}
+	.home-inline-card {
+		display: none;
+	}
+	.home-stage {
+		display: block;
+	}
+	/* Vertically centred for a card about 34rem tall with its notification */
+	.home-stage-sticky {
+		position: sticky;
+		top: max(1.5rem, calc(50vh - 17rem));
+	}
+}
+
+@keyframes home-fill {
+	to {
+		scale: 1 1;
+	}
+}
+
+@supports (animation-timeline: view()) {
+	@media (width >= 64rem) and (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+		/* From the step's top reaching that line to its bottom reaching it */
+		.home-step {
+			view-timeline-name: --home-step;
+		}
+		.home-step:not(:last-child)::after {
+			animation: home-fill linear both;
+			animation-timeline: --home-step;
+			animation-range: cover 40vh cover calc(100% - 60vh);
+		}
+	}
+}
+
+/* ── Reveal on scroll ───────────────────────────────────────────────────────
+   Driven by the scroll position itself, so it needs no script. Without support it simply shows. */
+
+@keyframes reveal {
+	from {
+		opacity: 0;
+		translate: 0 1.5rem;
+	}
+}
+
+@supports (animation-timeline: view()) {
+	@media (prefers-reduced-motion: no-preference) {
+		.home-reveal {
+			animation: reveal linear both;
+			animation-timeline: view();
+			animation-range: entry 0% entry 12rem;
+		}
+	}
+}
+
+/* ── Why sealed: the running count pulls later votes toward the leader ──────
+   Each row's share moves from --from to --to as the card scrolls through the viewport; without
+   scroll-driven animations it shows --to. The percentage is a CSS counter of the same value. */
+
+@property --herd-share {
+	syntax: '<integer>';
+	inherits: true;
+	initial-value: 0;
+}
+
+.home-herd-row {
+	--herd-share: var(--to);
+}
+.home-herd-bar {
+	position: absolute;
+	inset: 0;
+	background-color: var(--muted);
+	transform-origin: left;
+	scale: calc(var(--herd-share) / 100) 1;
+}
+.home-herd-share {
+	counter-reset: share var(--herd-share);
+}
+.home-herd-share::after {
+	content: counter(share) '%';
+}
+
+@keyframes herd {
+	from {
+		--herd-share: var(--from);
+	}
+	to {
+		--herd-share: var(--to);
+	}
+}
+
+@supports (animation-timeline: view()) {
+	@media (prefers-reduced-motion: no-preference) {
+		.home-herd {
+			view-timeline-name: --herd;
+		}
+		.home-herd-row {
+			animation: herd linear both;
+			animation-timeline: --herd;
+			animation-range: entry 40% cover 55%;
+		}
+	}
+}

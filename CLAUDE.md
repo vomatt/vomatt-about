@@ -30,7 +30,7 @@ const { data } = await sanityFetch({ query: pageGeneralQuery, params: { slug } }
 ### Routes
 
 - `/[slug]` renders a `pGeneral` page (`src/components/PageGeneral.tsx`): `editor` layout is Portable Text, `modules` layout is the page builder (`src/components/PageModules.tsx`). Every published slug is prerendered; `instant = false` lets an unknown slug block and return a real 404.
-- `/` redirects to `/about` (`next.config.ts`) until `pHome` has modules. `gHeader`, `gFooter`, `gAnnouncement` and `p404` are empty in Sanity, so the header, footer links (`src/components/SiteChrome.tsx`) and 404 are static. Carousel and marquee modules aren't ported (embla 6 needs React 17).
+- `/` is the code-authored homepage (`src/app/page.tsx`, sections in `src/components/home/`, motion in `home.css` there; `pHome` in Sanity is unused). It sets `data-wide-frame`, so the `wide-frame:` variant in `global.css` widens the header, footer and main column to `max-w-page`; other pages keep `max-w-main`. Its mock polls copy vomatt-web's poll card, ballot, Seal and results, so check them when those change. `gHeader`, `gFooter`, `gAnnouncement` and `p404` are empty in Sanity, so the header, footer links (`src/components/SiteChrome.tsx`) and 404 are static. Carousel and marquee modules aren't ported (embla 6 needs React 17).
 - Links: an internal Sanity reference stays on this site; an external link with a relative URL (`/explore`, `/login`) is a vomatt-web route and goes to `NEXT_PUBLIC_APP_URL` (`src/components/CMSLink.tsx`).
 - Cookie consent (`src/components/CookieConsent.tsx`) sets its cookie on `vomatt.com` in production so the app and this site share one answer, and renders nothing until `settingsIntegration` has an analytics ID.
 

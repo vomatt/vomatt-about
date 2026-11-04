@@ -87,7 +87,7 @@ export default async function RootLayout({ children }: LayoutProps<'/'>) {
 			<body className="flex min-h-svh flex-col font-sans text-foreground">
 				<SiteHeader />
 				<main id="main" className="w-full flex-1 px-contain pt-8 pb-16">
-					<div className="mx-auto w-full max-w-main">{children}</div>
+					<div className="mx-auto w-full max-w-main wide-frame:max-w-page">{children}</div>
 				</main>
 				<SiteFooter />
 				<CookieConsent integrations={settings?.integrations} />
