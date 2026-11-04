@@ -4,10 +4,10 @@ import BrandLogo from '@/components/BrandLogo';
 import { cn } from '@/lib/utils';
 
 /** The logo linking home. The svg is unlabeled, so the link carries the brand name. */
-export function BrandLink({ className }: { className?: string }) {
+export function BrandLink({ href, className }: { href: string; className?: string }) {
 	return (
 		<Link
-			href="/"
+			href={href}
 			aria-label="vomatt"
 			className={cn(
 				'block text-foreground outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-ring',

@@ -1,5 +1,15 @@
 import { defineQuery } from 'groq';
 
+import { DEFAULT_LOCALE } from '@/i18n/locales';
+
+// Docs written before translations existed have no language; they are the default locale's
+const docLanguage = `coalesce(language, "${DEFAULT_LOCALE}")`;
+// With `[0]`, the doc in the request's $locale if there is one, else the default locale's
+const inLocaleOrDefault = `${docLanguage} in [$locale, "${DEFAULT_LOCALE}"]`;
+const preferLocale = `order(select(${docLanguage} == $locale => 0, 1))`;
+// Every language the page is written in, for hreflang
+const translations = (match: string) => `"translations": array::unique(*[${match}]{"l": ${docLanguage}}.l)`;
+
 // Base queries for common fields
 const baseFields = defineQuery(`
 	_id,
@@ -11,13 +21,15 @@ const baseFields = defineQuery(`
 		"siteTitle": *[_type == "settingsGeneral"][0].siteTitle,
 	}
 `);
+// An internal link stays in the request's $locale; a page without that translation falls back there
+const localePrefix = `select($locale == "${DEFAULT_LOCALE}" => "", "/" + $locale)`;
 export const resolvedHrefQuery = defineQuery(`
 	"resolvedHref": select(
 			linkType == "external" => externalUrl,
 			linkType == "internal" => internalLink-> {
 				"url": select(
-					_type == "pHome" => "/",
-					defined(slug.current) => "/" + slug.current,
+					_type == "pHome" => select($locale == "${DEFAULT_LOCALE}" => "/", "/" + $locale),
+					defined(slug.current) => ${localePrefix} + "/" + slug.current,
 					null
 				)
 			}.url,
@@ -188,8 +200,10 @@ export const siteSharingQuery = defineQuery(`
 `);
 
 export const pageGeneralQuery = defineQuery(`
-	*[_type == "pGeneral" && slug.current == $slug][0]{
+	*[_type == "pGeneral" && slug.current == $slug && ${inLocaleOrDefault}] | ${preferLocale}[0]{
 		${baseFields},
+		"language": ${docLanguage},
+		${translations('_type == "pGeneral" && slug.current == ^.slug.current')},
 		_updatedAt,
 		layout,
 		showLastUpdated,
@@ -206,3 +220,34 @@ export const pageGeneralSlugsQuery = defineQuery(`
   {"slug": slug.current}
 `);
 
+/** Every page on the site, once per language it's written in. */
+export const sitemapQuery = defineQuery(`
+	*[_type == "pHome" || (_type == "pGeneral" && defined(slug.current))]{
+		"path": select(_type == "pHome" => "/", "/" + slug.current),
+		"language": ${docLanguage}
+	}
+`);
+
+
+export const homeQuery = defineQuery(`
+	*[_type == "pHome" && ${inLocaleOrDefault}] | ${preferLocale}[0]{
+		"language": ${docLanguage},
+		${translations('_type == "pHome"')},
+		"sharing": {
+			...sharing,
+			"siteTitle": *[_type == "settingsGeneral"][0].siteTitle,
+		},
+		hero,
+		howItWorks,
+		whySealed,
+		features,
+		useCases,
+		promise {
+			...,
+			footnote[]{
+				${portableTextContentFields}
+			}
+		},
+		finalCta
+	}
+`);

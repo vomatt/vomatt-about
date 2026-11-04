@@ -14,7 +14,7 @@ const DESCRIPTION =
 	'Start a poll and let everyone vote. Ballots stay sealed while it’s open, so nobody votes with the crowd, and everyone sees the result when it closes.';
 
 // The share image, site name and locale come from the root layout (Sanity's settings); only the words change
-export async function generateMetadata(_props: PageProps<'/'>, parent: ResolvingMetadata): Promise<Metadata> {
+export async function generateMetadata(_props: PageProps<'/[locale]'>, parent: ResolvingMetadata): Promise<Metadata> {
 	const { openGraph } = await parent;
 	const title = `${openGraph?.siteName || 'vomatt'}: public polls with sealed ballots`;
 

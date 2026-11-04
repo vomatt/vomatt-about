@@ -1,10 +1,22 @@
 import type { MetadataRoute } from 'next';
 
+import { isLocale, type Locale } from '@/i18n/locales';
+import { languageAlternates, pageUrl } from '@/lib/defineMetadata';
 import { sanityFetch } from '@/sanity/lib/live';
-import { pageGeneralSlugsQuery } from '@/sanity/lib/queries';
+import { sitemapQuery } from '@/sanity/lib/queries';
 
+/** Each page in each language it's written in, with its translations as hreflang alternates. */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-	const { data } = await sanityFetch({ query: pageGeneralSlugsQuery });
-	const paths = ['', ...((data ?? []) as { slug: string }[]).map(({ slug }) => `/${slug}`)];
-	return paths.map((path) => ({ url: `${process.env.SITE_URL}${path}` }));
+	const { data } = await sanityFetch({ query: sitemapQuery });
+	const languagesByPath = new Map<string, Locale[]>();
+	for (const { path, language } of (data ?? []) as { path: string; language: string }[]) {
+		if (isLocale(language)) languagesByPath.set(path, [...(languagesByPath.get(path) ?? []), language]);
+	}
+
+	return [...languagesByPath].flatMap(([path, languages]) =>
+		languages.map((locale) => ({
+			url: pageUrl(locale, path),
+			alternates: { languages: languageAlternates(path, languages) },
+		}))
+	);
 }

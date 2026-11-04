@@ -2,7 +2,7 @@ import 'react-intersection-observer/test-utils';
 
 import { render, screen } from '@testing-library/react';
 
-import HomePage from '@/app/page';
+import HomePage from '@/app/[locale]/page';
 
 describe('HomePage', () => {
 	const original = process.env.NEXT_PUBLIC_APP_URL;

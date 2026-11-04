@@ -6,6 +6,8 @@ import { Geist, Geist_Mono } from 'next/font/google';
 
 import { CookieConsent } from '@/components/CookieConsent';
 import { SiteFooter, SiteHeader } from '@/components/SiteChrome';
+import { LOCALES, locales } from '@/i18n/locales';
+import { getLocale } from '@/i18n/server';
 import { buildShareImageUrl, imageBuilder } from '@/sanity/lib/image';
 import { sanityFetch } from '@/sanity/lib/live';
 import { siteSharingQuery } from '@/sanity/lib/queries';
@@ -25,7 +27,12 @@ const getSiteSettings = () =>
 			return null;
 		});
 
+export function generateStaticParams() {
+	return locales.map((locale) => ({ locale }));
+}
+
 export async function generateMetadata(): Promise<Metadata> {
+	const locale = await getLocale();
 	const data = await getSiteSettings();
 	const { siteTitle = '', favicon, faviconLight, shareGraphic, shareVideo } =
 		data || {};
@@ -59,7 +66,7 @@ export async function generateMetadata(): Promise<Metadata> {
 				? [{ url: shareVideo, width: 1200, height: 630, type: 'video/mp4' }]
 				: [],
 			siteName: siteTitle,
-			locale: 'en_US',
+			locale: LOCALES[locale].ogLocale,
 			type: 'website',
 		},
 		icons: siteFaviconUrl
@@ -76,21 +83,22 @@ export async function generateMetadata(): Promise<Metadata> {
 	};
 }
 
-export default async function RootLayout({ children }: LayoutProps<'/'>) {
+export default async function RootLayout({ children }: LayoutProps<'/[locale]'>) {
+	const locale = await getLocale();
 	const settings = await getSiteSettings();
 
 	return (
 		<html
-			lang="en"
+			lang={LOCALES[locale].htmlLang}
 			className={`${geistSans.variable} ${geistMono.variable} antialiased`}
 		>
 			<body className="flex min-h-svh flex-col font-sans text-foreground">
-				<SiteHeader />
+				<SiteHeader locale={locale} />
 				<main id="main" className="w-full flex-1 px-contain pt-8 pb-16">
 					<div className="mx-auto w-full max-w-main wide-frame:max-w-page">{children}</div>
 				</main>
-				<SiteFooter />
-				<CookieConsent integrations={settings?.integrations} />
+				<SiteFooter locale={locale} />
+				<CookieConsent locale={locale} integrations={settings?.integrations} />
 			</body>
 		</html>
 	);
