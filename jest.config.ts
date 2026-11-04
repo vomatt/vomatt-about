@@ -13,14 +13,14 @@ const config: Config = {
 	testMatch: ['<rootDir>/src/**/__tests__/**/*.test.{ts,tsx}'],
 };
 
-// @sanity/image-url and groq ship ESM only, so let next/jest transform it
+// @sanity/image-url, @portabletext and groq ship ESM only, so let next/jest transform them
 const jestConfig = async () => {
 	const resolved = await createJestConfig(config)();
 	return {
 		...resolved,
 		transformIgnorePatterns: (resolved.transformIgnorePatterns ?? []).map(
 			(pattern) =>
-				pattern.replace('(?!(geist|', '(?!(@sanity/image-url|groq|geist|')
+				pattern.replace('(?!(geist|', '(?!(@sanity/image-url|@portabletext|groq|geist|')
 		),
 	};
 };

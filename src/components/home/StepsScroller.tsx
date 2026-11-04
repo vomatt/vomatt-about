@@ -3,6 +3,8 @@
 import { type ReactNode, useEffect, useRef, useState } from 'react';
 import { observe } from 'react-intersection-observer';
 
+import type { Locale } from '@/i18n/locales';
+
 import { prefersReducedMotion } from './motion';
 import { POLL } from './poll';
 import { PollMock, type PollStep } from './PollMock';
@@ -37,7 +39,7 @@ const turnoutAt = (step: PollStep) => (step >= 2 ? POLL.turnout : 0);
  * beside the steps instead and moves to the last step whose top has scrolled above 60% of the screen.
  * The server renders every card in its own step's final state, so the steps read fully without script.
  */
-export function StepsScroller({ header, steps }: { header: ReactNode; steps: Step[] }) {
+export function StepsScroller({ header, steps, locale }: { header: ReactNode; steps: Step[]; locale: Locale }) {
 	const stepRefs = useRef<(HTMLLIElement | null)[]>([]);
 	const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
 	// null until the observers first report: until then each card shows its step's final state
@@ -69,7 +71,7 @@ export function StepsScroller({ header, steps }: { header: ReactNode; steps: Ste
 						const cardStep = (cardsReached === null || cardsReached >= number ? number : number - 1) as PollStep;
 						return (
 							<li
-								key={step.title}
+								key={index}
 								ref={(element) => {
 									stepRefs.current[index] = element;
 								}}
@@ -94,7 +96,7 @@ export function StepsScroller({ header, steps }: { header: ReactNode; steps: Ste
 									aria-hidden
 									className="home-inline-card"
 								>
-									<PollMock step={cardStep} turnout={turnoutAt(cardStep)} notify={number === 3} />
+									<PollMock locale={locale} step={cardStep} turnout={turnoutAt(cardStep)} notify={number === 3} />
 								</div>
 							</li>
 						);
@@ -103,7 +105,7 @@ export function StepsScroller({ header, steps }: { header: ReactNode; steps: Ste
 			</div>
 			<div aria-hidden className="home-stage">
 				<div className="home-stage-sticky">
-					<PollMock step={stageStep} turnout={turnoutAt(stageStep)} notify />
+					<PollMock locale={locale} step={stageStep} turnout={turnoutAt(stageStep)} notify />
 				</div>
 			</div>
 		</div>

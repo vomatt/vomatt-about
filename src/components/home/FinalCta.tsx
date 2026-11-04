@@ -1,10 +1,11 @@
 import { buttonVariants } from '@/components/ui/Button';
 import { Plus } from '@/components/ui/SvgIcons';
 
+import type { HomeContent } from './content';
 import { SealMark } from './ProductUI';
 import { appHref } from './shared';
 
-export function FinalCta() {
+export function FinalCta({ content }: { content: HomeContent['finalCta'] }) {
 	return (
 		<section
 			aria-labelledby="final-cta-title"
@@ -12,18 +13,18 @@ export function FinalCta() {
 		>
 			<div className="flex max-w-[34rem] flex-col gap-3">
 				<h2 id="final-cta-title" className="display-heading text-[28px] leading-[1.15] text-foreground md:text-[36px]">
-					Got a question for everyone?
+					{content.heading}
 				</h2>
 				<p className="text-[17px] leading-[1.6] text-muted-foreground">
-					A poll takes a minute to write and seals itself the moment it opens. Thank you for asking, and for answering.
+					{content.body}
 				</p>
 				<div className="flex flex-wrap gap-3 pt-3">
 					<a href={appHref('/login')} className={buttonVariants({ variant: 'create', size: 'lg' })}>
 						<Plus aria-hidden />
-						Start a poll
+						{content.primaryLabel}
 					</a>
 					<a href={appHref('/explore')} className={buttonVariants({ variant: 'outline', size: 'lg' })}>
-						Explore open polls
+						{content.secondaryLabel}
 					</a>
 				</div>
 			</div>

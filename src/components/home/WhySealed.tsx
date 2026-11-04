@@ -1,31 +1,32 @@
 import type { CSSProperties } from 'react';
 
 import { Eye, Lock } from '@/components/ui/SvgIcons';
+import type { Locale } from '@/i18n/locales';
+import { formatCount, MESSAGES } from '@/i18n/messages';
 import { cn } from '@/lib/utils';
 
-import { formatCount, POLL } from './poll';
+import type { HomeContent } from './content';
+import { POLL, pollIn } from './poll';
 import { BallotMark } from './ProductUI';
 import { SectionHeading } from './shared';
 
-// The same poll with the count on show: the early leader pulls later votes toward it as the card scrolls by
+// The same poll with the count on show, option by option: the early leader pulls later votes toward it as the card scrolls by
 const HERD = [
-	{ text: 'Thursday', from: 36, to: 64 },
-	{ text: 'Friday', from: 34, to: 25 },
-	{ text: 'Sunday', from: 30, to: 11 },
+	{ from: 36, to: 64 },
+	{ from: 34, to: 25 },
+	{ from: 30, to: 11 },
 ];
 
 function Panel({
-	label,
+	content: { label, title, body },
+	pollTitle,
 	icon,
-	title,
-	body,
 	className,
 	children,
 }: {
-	label: string;
+	content: HomeContent['whySealed']['sealed'];
+	pollTitle: string;
 	icon: React.ReactNode;
-	title: string;
-	body: string;
 	className?: string;
 	children: React.ReactNode;
 }) {
@@ -36,7 +37,7 @@ function Panel({
 				{label}
 			</p>
 			<div aria-hidden className="flex flex-col gap-3">
-				<p className="item-title leading-[1.35] text-foreground">{POLL.title}</p>
+				<p className="item-title leading-[1.35] text-foreground">{pollTitle}</p>
 				{children}
 			</div>
 			<div className="mt-auto flex flex-col gap-1.5 border-t border-border pt-5">
@@ -47,32 +48,34 @@ function Panel({
 	);
 }
 
-export function WhySealed() {
+export function WhySealed({ content, locale }: { content: HomeContent['whySealed']; locale: Locale }) {
+	const poll = pollIn(locale);
+	const copy = MESSAGES[locale].home;
+	const voted = copy.pollCard.votedCount(formatCount(locale, POLL.turnout));
 	return (
 		<section aria-labelledby="why-sealed-title" className="flex flex-col gap-10">
 			<SectionHeading
 				id="why-sealed-title"
-				eyebrow="Why sealed"
-				title="A running count changes the answer"
-				intro="When people can see who’s ahead, later voters drift toward the leader. Sealing the ballots keeps every vote the voter’s own."
+				eyebrow={content.eyebrow}
+				title={content.heading}
+				intro={content.intro}
 			/>
 			<div className="grid gap-4 md:grid-cols-2">
 				<Panel
-					label="Polls with a running count"
+					content={content.openCount}
+					pollTitle={poll.title}
 					icon={<Eye aria-hidden className="size-4" />}
-					title="The count shows, so people follow it"
-					body="Early votes set the direction. Everyone after them sees who’s winning and joins in, so the result mostly says who voted first."
 					className="home-herd"
 				>
 					<ul className="space-y-2">
-						{HERD.map((row) => (
+						{HERD.map((row, index) => (
 							<li
-								key={row.text}
+								key={index}
 								style={{ '--from': row.from, '--to': row.to } as CSSProperties}
 								className="home-herd-row relative flex min-h-11 items-center justify-between gap-3 overflow-hidden rounded-xl border border-border px-4 text-[15px] font-medium text-foreground"
 							>
 								<span className="home-herd-bar" />
-								<span className="relative">{row.text}</span>
+								<span className="relative">{poll.options[index].text}</span>
 								<span className="home-herd-share relative text-[14px] text-muted-foreground tabular-nums" />
 							</li>
 						))}
@@ -80,20 +83,19 @@ export function WhySealed() {
 					<p className="flex items-center justify-between gap-3 text-[14px] text-muted-foreground">
 						<span className="flex min-w-0 items-center gap-2">
 							<Eye className="size-4 shrink-0" />
-							Updates with every vote
+							{copy.whySealed.live}
 						</span>
-						<span className="shrink-0 tabular-nums">{formatCount(POLL.turnout)} voted</span>
+						<span className="shrink-0 tabular-nums">{voted}</span>
 					</p>
 				</Panel>
 
 				<Panel
-					label="Polls on vomatt"
+					content={content.sealed}
+					pollTitle={poll.title}
 					icon={<Lock aria-hidden className="size-4 text-tide" />}
-					title="The count is sealed, so people decide"
-					body="Everyone sees how many people have voted, and nobody sees the count until it closes. Each vote says what that voter thinks."
 				>
 					<ul className="space-y-2">
-						{POLL.options.map((option) => (
+						{poll.options.map((option) => (
 							<li
 								key={option.text}
 								className="flex min-h-11 items-center gap-3 rounded-xl border border-border px-4 text-[15px] font-medium text-foreground"
@@ -106,9 +108,9 @@ export function WhySealed() {
 					<p className="flex items-center justify-between gap-3 text-[14px] text-muted-foreground">
 						<span className="flex min-w-0 items-center gap-2 text-tide-foreground">
 							<Lock className="size-4 shrink-0 text-tide" />
-							Sealed until Fri 20:00
+							{copy.whySealed.sealedUntil}
 						</span>
-						<span className="shrink-0 tabular-nums">{formatCount(POLL.turnout)} voted</span>
+						<span className="shrink-0 tabular-nums">{voted}</span>
 					</p>
 				</Panel>
 			</div>

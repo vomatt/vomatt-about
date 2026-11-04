@@ -1,5 +1,18 @@
 import { defineQuery } from 'groq';
 
+import { DEFAULT_LOCALE, type Locale, LOCALES } from '@/i18n/locales';
+
+/** The params every locale-aware query takes: the URL's locale and its URL prefix from the locale table. */
+export const localeParams = (locale: Locale) => ({ locale, prefix: LOCALES[locale].prefix });
+
+// Docs written before translations existed have no language; they are the default locale's
+const docLanguage = `coalesce(language, "${DEFAULT_LOCALE}")`;
+// With `[0]`, the doc in the request's $locale if there is one, else the default locale's
+const inLocaleOrDefault = `${docLanguage} in [$locale, "${DEFAULT_LOCALE}"]`;
+const preferLocale = `order(select(${docLanguage} == $locale => 0, 1))`;
+// Every language the page is written in, for hreflang
+const translations = (match: string) => `"translations": array::unique(*[${match}]{"l": ${docLanguage}}.l)`;
+
 // Base queries for common fields
 const baseFields = defineQuery(`
 	_id,
@@ -11,13 +24,14 @@ const baseFields = defineQuery(`
 		"siteTitle": *[_type == "settingsGeneral"][0].siteTitle,
 	}
 `);
+// An internal link stays in the request's locale ($prefix); a page without that translation falls back there
 export const resolvedHrefQuery = defineQuery(`
 	"resolvedHref": select(
 			linkType == "external" => externalUrl,
 			linkType == "internal" => internalLink-> {
 				"url": select(
-					_type == "pHome" => "/",
-					defined(slug.current) => "/" + slug.current,
+					_type == "pHome" => select($prefix == "" => "/", $prefix),
+					defined(slug.current) => $prefix + "/" + slug.current,
 					null
 				)
 			}.url,
@@ -188,8 +202,10 @@ export const siteSharingQuery = defineQuery(`
 `);
 
 export const pageGeneralQuery = defineQuery(`
-	*[_type == "pGeneral" && slug.current == $slug][0]{
+	*[_type == "pGeneral" && slug.current == $slug && ${inLocaleOrDefault}] | ${preferLocale}[0]{
 		${baseFields},
+		"language": ${docLanguage},
+		${translations('_type == "pGeneral" && slug.current == ^.slug.current')},
 		_updatedAt,
 		layout,
 		showLastUpdated,
@@ -206,3 +222,36 @@ export const pageGeneralSlugsQuery = defineQuery(`
   {"slug": slug.current}
 `);
 
+// A homepage renders only with every section filled in; a translation missing one falls back to the default locale's
+const homeComplete = `_type == "pHome" && defined(hero) && defined(howItWorks.steps) && defined(whySealed.openCount) && defined(whySealed.sealed) && defined(features.items) && defined(useCases.items) && defined(promise.rules) && defined(finalCta)`;
+
+/** Every page on the site, once per language it's written in. */
+export const sitemapQuery = defineQuery(`
+	*[(${homeComplete}) || (_type == "pGeneral" && defined(slug.current))]{
+		"path": select(_type == "pHome" => "/", "/" + slug.current),
+		"language": ${docLanguage}
+	}
+`);
+
+export const homeQuery = defineQuery(`
+	*[${homeComplete} && ${inLocaleOrDefault}] | ${preferLocale}[0]{
+		"language": ${docLanguage},
+		${translations(homeComplete)},
+		"sharing": {
+			...sharing,
+			"siteTitle": *[_type == "settingsGeneral"][0].siteTitle,
+		},
+		hero,
+		howItWorks,
+		whySealed,
+		features,
+		useCases,
+		promise {
+			...,
+			footnote[]{
+				${portableTextContentFields}
+			}
+		},
+		finalCta
+	}
+`);

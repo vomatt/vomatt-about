@@ -1,12 +1,15 @@
 import { buttonVariants } from '@/components/ui/Button';
 import { Lock, Plus } from '@/components/ui/SvgIcons';
+import { type Locale } from '@/i18n/locales';
+import { formatCount, MESSAGES } from '@/i18n/messages';
 
+import type { HomeContent } from './content';
 import { HeroPoll } from './HeroPoll';
-import { formatCount, POLL } from './poll';
+import { POLL, pollIn } from './poll';
 import { appHref } from './shared';
 
 /** The page's h1 beside a poll on vomatt: the question is the hero. */
-export function Hero() {
+export function Hero({ content, locale }: { content: HomeContent['hero']; locale: Locale }) {
 	return (
 		<section
 			aria-labelledby="home-title"
@@ -15,32 +18,31 @@ export function Hero() {
 			<div className="flex flex-col items-start gap-5">
 				<p className="inline-flex items-center gap-2 rounded-full border border-tide-line bg-tide-tint px-3 py-1.5 text-[13px] leading-4 font-medium text-tide-foreground">
 					<Lock aria-hidden className="size-3.5 shrink-0 text-tide" />
-					Ballots stay sealed until the poll closes
+					{content.badge}
 				</p>
 				<h1 id="home-title" className="display-heading text-[36px] leading-[1.1] text-foreground md:text-[48px]">
-					Ask everyone. Hear what they really think.
+					{content.heading}
 				</h1>
 				<p className="max-w-[34rem] text-[17px] leading-[1.6] text-muted-foreground">
-					Anyone can start a poll on vomatt, and anyone can vote. While it’s open, everyone sees how many people have
-					voted but not how, so nobody votes with the crowd. When it closes, everyone sees the result.
+					{content.body}
 				</p>
 				<div className="flex flex-wrap gap-3 pt-1">
 					<a href={appHref('/login')} className={buttonVariants({ variant: 'create', size: 'lg' })}>
 						<Plus aria-hidden />
-						Start a poll
+						{content.primaryLabel}
 					</a>
 					<a href="#how-it-works" className={buttonVariants({ variant: 'outline', size: 'lg' })}>
-						How it works
+						{content.secondaryLabel}
 					</a>
 				</div>
 			</div>
 
 			<div
 				role="img"
-				aria-label={`An open poll on vomatt: “${POLL.title}” ${formatCount(POLL.turnout)} people have voted, and the results stay sealed until it ends on Friday.`}
+				aria-label={MESSAGES[locale].home.heroLabel(pollIn(locale).title, formatCount(locale, POLL.turnout))}
 				className="w-full"
 			>
-				<HeroPoll />
+				<HeroPoll locale={locale} />
 			</div>
 		</section>
 	);

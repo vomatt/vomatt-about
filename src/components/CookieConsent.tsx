@@ -5,6 +5,8 @@ import { useSyncExternalStore } from 'react';
 
 import { HeadTrackingCode, Integrations } from '@/components/HeadTrackingCode';
 import { buttonVariants } from '@/components/ui/Button';
+import { type Locale, localizedPath } from '@/i18n/locales';
+import { MESSAGES } from '@/i18n/messages';
 
 export const CONSENT_COOKIE = 'cookie-consent';
 type Consent = 'granted' | 'denied';
@@ -28,7 +30,7 @@ function subscribe(listener: () => void) {
 }
 
 /** Asks before loading analytics; renders nothing when no analytics ID is set in Sanity. */
-export function CookieConsent({ integrations }: { integrations?: Integrations | null }) {
+export function CookieConsent({ locale, integrations }: { locale: Locale; integrations?: Integrations | null }) {
 	// undefined on the server, so the banner doesn't flash for returning visitors
 	const consent = useSyncExternalStore(subscribe, readConsent, () => undefined);
 
@@ -43,28 +45,28 @@ export function CookieConsent({ integrations }: { integrations?: Integrations | 
 	if (consent === 'granted') return <HeadTrackingCode {...integrations} />;
 	if (consent !== null) return null;
 
+	const copy = MESSAGES[locale].cookies;
 	return (
 		<section
-			aria-label="Cookie consent"
+			aria-label={copy.label}
 			className="fixed inset-x-3 bottom-3 z-50 rounded-lg border border-border bg-card p-4 shadow-lg md:inset-x-auto md:right-4 md:bottom-4 md:max-w-sm"
 		>
 			<p className="text-sm">
-				We’d like to use analytics cookies to understand how vomatt is used. Sign-in and language cookies are always
-				on.{' '}
-				<Link href="/cookies-policy" className="underline underline-offset-2">
-					Cookies Policy
+				{copy.body}{' '}
+				<Link href={localizedPath(locale, '/cookies-policy')} className="underline underline-offset-2">
+					{copy.policy}
 				</Link>
 			</p>
 			<div className="mt-3 flex gap-2">
 				<button type="button" className={buttonVariants({ size: 'sm' })} onClick={() => choose('granted')}>
-					Accept analytics
+					{copy.accept}
 				</button>
 				<button
 					type="button"
 					className={buttonVariants({ size: 'sm', variant: 'outline' })}
 					onClick={() => choose('denied')}
 				>
-					Decline
+					{copy.decline}
 				</button>
 			</div>
 		</section>
@@ -72,7 +74,7 @@ export function CookieConsent({ integrations }: { integrations?: Integrations | 
 }
 
 /** Clears the saved choice so the banner asks again; reloads if analytics already ran. */
-export function CookieSettingsButton() {
+export function CookieSettingsButton({ locale }: { locale: Locale }) {
 	const reopen = () => {
 		const wasGranted = readConsent() === 'granted';
 		document.cookie = consentCookie('', window.location.hostname);
@@ -82,7 +84,7 @@ export function CookieSettingsButton() {
 
 	return (
 		<button type="button" className={buttonVariants({ variant: 'outline', className: 'mt-8' })} onClick={reopen}>
-			Cookie settings
+			{MESSAGES[locale].cookies.settings}
 		</button>
 	);
 }
