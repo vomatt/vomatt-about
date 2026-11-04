@@ -20,7 +20,7 @@ export function VotePromise({ content }: { content: HomeContent['promise'] }) {
 			/>
 			<div className="home-reveal flex flex-col gap-5">
 				<TideRules className="grid gap-x-10 gap-y-5 space-y-0 p-5 text-[15px] md:grid-cols-2 md:p-7">
-					{content.rules.map((rule, index) => (
+					{content.rules.slice(0, RULE_ICONS.length).map((rule, index) => (
 						<TideRule key={index} icon={RULE_ICONS[index]}>
 							<span className="block font-medium">{rule.title}</span>
 							{rule.body}

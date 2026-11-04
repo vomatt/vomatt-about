@@ -2,17 +2,21 @@ import { ReactNode } from 'react';
 
 import CustomPortableText from '@/components/CustomPortableText';
 import PageModules, { type PageModule } from '@/components/PageModules';
-import { type Locale, LOCALES } from '@/i18n/locales';
+import { type Locale, LOCALES, locales } from '@/i18n/locales';
 import { MESSAGES } from '@/i18n/messages';
 
 // "October 29, 2026" or "2026年10月29日", the day in Taiwan, as vomatt-web shows it
-const lastUpdatedFormat = (locale: Locale) =>
-	new Intl.DateTimeFormat(LOCALES[locale].intl, {
-		day: 'numeric',
-		month: 'long',
-		year: 'numeric',
-		timeZone: 'Asia/Taipei',
-	});
+const lastUpdatedFormat = Object.fromEntries(
+	locales.map((locale) => [
+		locale,
+		new Intl.DateTimeFormat(LOCALES[locale].intl, {
+			day: 'numeric',
+			month: 'long',
+			year: 'numeric',
+			timeZone: 'Asia/Taipei',
+		}),
+	])
+) as Record<Locale, Intl.DateTimeFormat>;
 
 /** A Sanity page, in the language it's written in (the fallback's when the URL's has no translation). */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -28,7 +32,7 @@ export default function PageGeneral({ data, children }: { data: any; children?: 
 				{showLastUpdated && _updatedAt && (
 					<p className="mb-8 text-[14px] text-muted-foreground">
 						{MESSAGES[language].page.lastUpdated}{' '}
-						<time dateTime={_updatedAt}>{lastUpdatedFormat(language).format(new Date(_updatedAt))}</time>
+						<time dateTime={_updatedAt}>{lastUpdatedFormat[language].format(new Date(_updatedAt))}</time>
 					</p>
 				)}
 				<div className="cms-prose text-lg">{content && <CustomPortableText blocks={content} />}</div>

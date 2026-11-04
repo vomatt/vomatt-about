@@ -2,6 +2,7 @@
 import type { Metadata, ResolvedMetadata } from 'next';
 
 import { DEFAULT_LOCALE, isLocale, type Locale, LOCALES, localizedPath } from '@/i18n/locales';
+import { MESSAGES } from '@/i18n/messages';
 import { buildShareImageUrl } from '@/sanity/lib/image';
 
 type Props = {
@@ -14,6 +15,8 @@ type Props = {
 		/** Every language the page is written in. */
 		translations?: string[];
 	} | null;
+	/** The URL's locale, which a missing page's metadata is written in. */
+	locale: Locale;
 	/** The page's path without a locale: '/' or '/about'. */
 	path: string;
 	/** The root layout's Open Graph, whose site name and share image a page without its own keeps. */
@@ -35,12 +38,15 @@ export function languageAlternates(path: string, languages: Locale[]) {
  * A page's metadata. The canonical URL is the page in the language its content is written in, so a
  * page shown in the fallback language points at the original; hreflang lists only real translations.
  */
-export default function defineMetadata({ data, path, parentOpenGraph }: Props): Metadata {
-	const { sharing, title, language = DEFAULT_LOCALE, translations = [] } = data || {};
+export default function defineMetadata({ data, locale, path, parentOpenGraph }: Props): Metadata {
+	// A missing page: no canonical or alternates to point at, and nothing to index
+	if (!data) return { title: MESSAGES[locale].notFound.title, robots: { index: false, follow: false } };
+
+	const { sharing, title, language, translations = [] } = data;
 	const isHomepage = path === '/';
 
 	const metaDesc = sharing?.metaDesc || '';
-	const metaTitle = sharing?.metaTitle || (isHomepage ? sharing?.siteTitle : title) || `Page not found`;
+	const metaTitle = sharing?.metaTitle || (isHomepage ? sharing?.siteTitle : title) || MESSAGES[language].notFound.title;
 	const shareGraphic = sharing?.shareGraphic?.asset;
 	const disableIndex = sharing?.disableIndex;
 

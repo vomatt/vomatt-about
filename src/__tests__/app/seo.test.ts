@@ -6,6 +6,8 @@ jest.mock('@/sanity/lib/live', () => ({
 		data: [
 			{ path: '/', language: 'en' },
 			{ path: '/', language: 'zh' },
+			// A second English homepage: still one entry
+			{ path: '/', language: 'en' },
 			{ path: '/about', language: 'en' },
 			{ path: '/about', language: 'zh' },
 			{ path: '/privacy-policy', language: 'en' },

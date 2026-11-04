@@ -1,6 +1,9 @@
 import { defineQuery } from 'groq';
 
-import { DEFAULT_LOCALE } from '@/i18n/locales';
+import { DEFAULT_LOCALE, type Locale, LOCALES } from '@/i18n/locales';
+
+/** The params every locale-aware query takes: the URL's locale and its URL prefix from the locale table. */
+export const localeParams = (locale: Locale) => ({ locale, prefix: LOCALES[locale].prefix });
 
 // Docs written before translations existed have no language; they are the default locale's
 const docLanguage = `coalesce(language, "${DEFAULT_LOCALE}")`;
@@ -21,15 +24,14 @@ const baseFields = defineQuery(`
 		"siteTitle": *[_type == "settingsGeneral"][0].siteTitle,
 	}
 `);
-// An internal link stays in the request's $locale; a page without that translation falls back there
-const localePrefix = `select($locale == "${DEFAULT_LOCALE}" => "", "/" + $locale)`;
+// An internal link stays in the request's locale ($prefix); a page without that translation falls back there
 export const resolvedHrefQuery = defineQuery(`
 	"resolvedHref": select(
 			linkType == "external" => externalUrl,
 			linkType == "internal" => internalLink-> {
 				"url": select(
-					_type == "pHome" => select($locale == "${DEFAULT_LOCALE}" => "/", "/" + $locale),
-					defined(slug.current) => ${localePrefix} + "/" + slug.current,
+					_type == "pHome" => select($prefix == "" => "/", $prefix),
+					defined(slug.current) => $prefix + "/" + slug.current,
 					null
 				)
 			}.url,
@@ -220,19 +222,21 @@ export const pageGeneralSlugsQuery = defineQuery(`
   {"slug": slug.current}
 `);
 
+// A homepage renders only with every section filled in; a translation missing one falls back to the default locale's
+const homeComplete = `_type == "pHome" && defined(hero) && defined(howItWorks.steps) && defined(whySealed.openCount) && defined(whySealed.sealed) && defined(features.items) && defined(useCases.items) && defined(promise.rules) && defined(finalCta)`;
+
 /** Every page on the site, once per language it's written in. */
 export const sitemapQuery = defineQuery(`
-	*[_type == "pHome" || (_type == "pGeneral" && defined(slug.current))]{
+	*[(${homeComplete}) || (_type == "pGeneral" && defined(slug.current))]{
 		"path": select(_type == "pHome" => "/", "/" + slug.current),
 		"language": ${docLanguage}
 	}
 `);
 
-
 export const homeQuery = defineQuery(`
-	*[_type == "pHome" && ${inLocaleOrDefault}] | ${preferLocale}[0]{
+	*[${homeComplete} && ${inLocaleOrDefault}] | ${preferLocale}[0]{
 		"language": ${docLanguage},
-		${translations('_type == "pHome"')},
+		${translations(homeComplete)},
 		"sharing": {
 			...sharing,
 			"siteTitle": *[_type == "settingsGeneral"][0].siteTitle,

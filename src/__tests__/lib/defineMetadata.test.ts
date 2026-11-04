@@ -16,6 +16,7 @@ describe('defineMetadata', () => {
 	it('points a translated page at itself and lists every translation', () => {
 		const metadata = defineMetadata({
 			data: { title: '關於', language: 'zh', translations: ['en', 'zh'] },
+			locale: 'zh',
 			path: '/about',
 		});
 		expect(metadata.alternates).toEqual({
@@ -28,6 +29,7 @@ describe('defineMetadata', () => {
 	it('points a page shown in its English fallback at the English original', () => {
 		const metadata = defineMetadata({
 			data: { title: 'About', language: 'en', translations: ['en'] },
+			locale: 'zh',
 			path: '/about',
 		});
 		expect(metadata.alternates).toEqual({
@@ -41,11 +43,16 @@ describe('defineMetadata', () => {
 		expect(
 			defineMetadata({
 				data: { language: 'zh', translations: ['en', 'zh'], sharing: { metaTitle: 'vomatt：密封投票', siteTitle: 'vomatt' } },
+				locale: 'zh',
 				path: '/',
 			})
 		).toMatchObject({ title: { absolute: 'vomatt：密封投票' }, alternates: { canonical: `${site}/zh` } });
 		expect(
-			defineMetadata({ data: { language: 'en', translations: ['en'], sharing: { siteTitle: 'vomatt' } }, path: '/' })
+			defineMetadata({
+				data: { language: 'en', translations: ['en'], sharing: { siteTitle: 'vomatt' } },
+				locale: 'en',
+				path: '/',
+			})
 		).toMatchObject({ title: { absolute: 'vomatt' }, alternates: { canonical: `${site}/` } });
 	});
 
@@ -53,9 +60,15 @@ describe('defineMetadata', () => {
 		const images = [{ url: 'https://cdn.sanity.io/site.png' }];
 		const metadata = defineMetadata({
 			data: { language: 'en', translations: ['en'] },
+			locale: 'en',
 			path: '/about',
 			parentOpenGraph: { images, siteName: 'vomatt' } as never,
 		});
 		expect(metadata.openGraph).toMatchObject({ images, siteName: 'vomatt' });
+	});
+
+	it('titles a missing page in the URL’s language and keeps it out of the index', () => {
+		const metadata = defineMetadata({ data: null, locale: 'zh', path: '/nope' });
+		expect(metadata).toEqual({ title: '找不到頁面', robots: { index: false, follow: false } });
 	});
 });

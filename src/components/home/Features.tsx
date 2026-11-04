@@ -143,7 +143,7 @@ export function Features({ content, locale }: { content: HomeContent['features']
 		<section aria-labelledby="features-title" className="flex flex-col gap-10">
 			<SectionHeading id="features-title" eyebrow={content.eyebrow} title={content.heading} intro={content.intro} />
 			<ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-				{content.items.map((feature, index) => (
+				{content.items.slice(0, mocks.length).map((feature, index) => (
 					<li
 						key={index}
 						className="home-reveal flex flex-col gap-4 rounded-2xl border border-border bg-card p-4 pb-5"

@@ -34,7 +34,7 @@ describe('HomePage', () => {
 
 	it('asks Sanity for the homepage in the URL’s locale', async () => {
 		await renderHome('zh', zhHome);
-		expect(fetchMock).toHaveBeenCalledWith(expect.objectContaining({ params: { locale: 'zh' } }));
+		expect(fetchMock).toHaveBeenCalledWith(expect.objectContaining({ params: { locale: 'zh', prefix: '/zh' } }));
 	});
 
 	it('leads with the headline from Sanity', async () => {
@@ -91,5 +91,18 @@ describe('HomePage', () => {
 		localeMock.mockResolvedValue('en');
 		fetchMock.mockResolvedValue({ data: null });
 		await expect(HomePage()).rejects.toThrow();
+	});
+
+	it('shows only the items it has a mock poll for when Sanity has extra', async () => {
+		const extra = { title: 'extra', body: 'extra body' };
+		await renderHome('en', {
+			...enHome,
+			features: { ...enHome.features, items: [...enHome.features.items, extra] },
+			useCases: { ...enHome.useCases, items: [...enHome.useCases.items, { who: 'extra who', body: 'b', question: 'q' }] },
+			promise: { ...enHome.promise, rules: [...enHome.promise.rules, extra] },
+		});
+		expect(screen.getByText('en who 4')).toBeInTheDocument();
+		expect(screen.queryByText('extra who')).not.toBeInTheDocument();
+		expect(screen.queryByText('extra')).not.toBeInTheDocument();
 	});
 });

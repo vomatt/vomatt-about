@@ -21,7 +21,7 @@ export function UseCases({ content, locale }: { content: HomeContent['useCases']
 			/>
 			{/* Each item spans two rows of the grid, so the cards line up across a row whatever the text above them */}
 			<ul className="grid gap-x-4 gap-y-10 md:grid-cols-2 md:gap-y-12">
-				{content.items.map((useCase, index) => (
+				{content.items.slice(0, AVATARS.length).map((useCase, index) => (
 					<li key={index} className="home-reveal row-span-2 grid grid-rows-subgrid gap-4">
 						<div className="flex flex-col gap-1.5">
 							<h3 className="item-title leading-[1.4] text-foreground">{useCase.who}</h3>

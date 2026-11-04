@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 
 const pathnameMock = jest.fn();
 jest.mock('next/navigation', () => ({ usePathname: () => pathnameMock() }));
@@ -29,5 +29,15 @@ describe('LanguageSwitcher', () => {
 		expect(screen.getByRole('navigation', { name: '語言' })).toBeInTheDocument();
 		expect(screen.getByRole('link', { name: 'English' })).toHaveAttribute('href', href);
 		expect(screen.queryByRole('link', { name: '繁體中文' })).not.toBeInTheDocument();
+	});
+
+	it('keeps the query string and anchor when switching', () => {
+		window.history.replaceState(null, '', '/privacy-policy?utm_source=news#cookies');
+		pathnameMock.mockReturnValue('/privacy-policy');
+		render(<LanguageSwitcher locale="en" label="Language" />);
+		const link = screen.getByRole('link', { name: '繁體中文' });
+		link.addEventListener('click', (event) => event.preventDefault());
+		fireEvent.click(link);
+		expect(link).toHaveAttribute('href', '/zh/privacy-policy?utm_source=news#cookies');
 	});
 });

@@ -15,23 +15,23 @@ import { LOCALES } from '@/i18n/locales';
 import { getLocale } from '@/i18n/server';
 import defineMetadata from '@/lib/defineMetadata';
 import { sanityFetch } from '@/sanity/lib/live';
-import { homeQuery } from '@/sanity/lib/queries';
+import { homeQuery, localeParams } from '@/sanity/lib/queries';
 
 async function getHome() {
 	const locale = await getLocale();
-	const { data } = await sanityFetch({ query: homeQuery, params: { locale } });
+	const { data } = await sanityFetch({ query: homeQuery, params: localeParams(locale) });
 	return data as HomeContent | null;
 }
 
 export async function generateMetadata(_props: PageProps<'/[locale]'>, parent: ResolvingMetadata): Promise<Metadata> {
-	const [data, { openGraph }] = await Promise.all([getHome(), parent]);
-	return defineMetadata({ data, path: '/', parentOpenGraph: openGraph });
+	const [locale, data, { openGraph }] = await Promise.all([getLocale(), getHome(), parent]);
+	return defineMetadata({ data, locale, path: '/', parentOpenGraph: openGraph });
 }
 
 export default async function HomePage() {
 	const data = await getHome();
-	// A pHome without the homepage's sections is the old page-builder doc, not a homepage
-	if (!data?.hero) notFound();
+	// homeQuery only returns a pHome with every section filled in
+	if (!data) notFound();
 
 	// The mock polls speak the language the copy beside them is written in
 	const locale = data.language;
