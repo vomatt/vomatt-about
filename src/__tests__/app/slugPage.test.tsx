@@ -34,3 +34,16 @@ describe('the cookies policy page', () => {
 		expect(settingsMock).not.toHaveBeenCalled();
 	});
 });
+
+describe('the brand mark', () => {
+	it('opens the about page, with a ballot dropping into its slot', async () => {
+		const { container } = await renderPage('about');
+		const ballot = container.querySelector('svg .mark-ballot');
+		expect(ballot?.closest('[aria-hidden]')).toBeInTheDocument();
+	});
+
+	it('stays off other pages', async () => {
+		const { container } = await renderPage('privacy-policy');
+		expect(container.querySelector('svg .mark-ballot')).not.toBeInTheDocument();
+	});
+});

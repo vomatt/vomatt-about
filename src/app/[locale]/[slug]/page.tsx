@@ -1,6 +1,7 @@
 import type { Metadata, ResolvingMetadata } from 'next';
 import { notFound } from 'next/navigation';
 
+import { BrandMark } from '@/components/BrandMark';
 import { CookieSettingsButton } from '@/components/CookieConsent';
 import PageGeneral from '@/components/PageGeneral';
 import { getLocale } from '@/i18n/server';
@@ -36,13 +37,17 @@ export async function generateMetadata(
 
 export default async function PageSlugRoute({ params }: PageProps<'/[locale]/[slug]'>) {
 	const { slug } = await params;
+	const isAbout = slug === 'about';
 	const isCookiesPolicy = slug === 'cookies-policy';
 	const [data, settings] = await Promise.all([getPage(slug), isCookiesPolicy ? getSiteSettings() : null]);
 	if (!data) notFound();
 
 	return (
-		<PageGeneral data={data}>
-			{isCookiesPolicy && <CookieSettingsButton locale={data.language} integrations={settings?.integrations} />}
-		</PageGeneral>
+		<>
+			{isAbout && <BrandMark className="mb-8" />}
+			<PageGeneral data={data}>
+				{isCookiesPolicy && <CookieSettingsButton locale={data.language} integrations={settings?.integrations} />}
+			</PageGeneral>
+		</>
 	);
 }
