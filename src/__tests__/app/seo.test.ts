@@ -33,6 +33,8 @@ describe('robots and sitemap', () => {
 			`${site}/about`,
 			`${site}/zh/about`,
 			`${site}/privacy-policy`,
+			`${site}/contact`,
+			`${site}/zh/contact`,
 		]);
 	});
 

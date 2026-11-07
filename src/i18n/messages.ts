@@ -1,3 +1,5 @@
+import type { ContactField } from '@/lib/contact';
+
 import { type Locale,LOCALES } from './locales';
 
 /** vomatt-web's META_GAP: parts of a meta line are separated by an em space, not a glyph. */
@@ -9,10 +11,26 @@ export const META_GAP = '\u2003';
  */
 export type Messages = {
 	header: { openApp: string };
-	footer: { navLabel: string; about: string; terms: string; privacy: string; cookies: string };
+	footer: { navLabel: string; about: string; contact: string; terms: string; privacy: string; cookies: string };
 	languageSwitcher: { label: string };
 	notFound: { title: string; body: string; home: string };
 	page: { lastUpdated: string };
+	contact: {
+		title: string;
+		intro: string;
+		labels: Record<ContactField, string>;
+		placeholders: Record<ContactField, string>;
+		required: Record<ContactField, string>;
+		tooLong: (max: number) => string;
+		invalidEmail: string;
+		/** The hidden anti-spam field's label; only bots see it. */
+		honeypot: string;
+		submit: string;
+		sending: string;
+		sent: { title: string; body: string };
+		/** Why a send failed: vomatt-api turned the details down, the visitor sent too many, or anything else. */
+		failed: { invalid: string; rateLimited: string; generic: string };
+	};
 	cookies: {
 		label: string;
 		body: string;
@@ -68,7 +86,7 @@ type UseCaseMock = { author: string; ends: string; meta: string };
 export const MESSAGES: Record<Locale, Messages> = {
 	en: {
 		header: { openApp: 'Open vomatt' },
-		footer: { navLabel: 'Legal', about: 'About', terms: 'Terms', privacy: 'Privacy', cookies: 'Cookies' },
+		footer: { navLabel: 'Site', about: 'About', contact: 'Contact', terms: 'Terms', privacy: 'Privacy', cookies: 'Cookies' },
 		languageSwitcher: { label: 'Language' },
 		notFound: {
 			title: 'Page not found',
@@ -76,6 +94,24 @@ export const MESSAGES: Record<Locale, Messages> = {
 			home: 'Go home',
 		},
 		page: { lastUpdated: 'Last updated' },
+		contact: {
+			title: 'Contact us',
+			intro: 'Questions about vomatt, a poll or your account? Send us a message and we’ll reply by email.',
+			labels: { name: 'Name', email: 'Email', message: 'Message' },
+			placeholders: { name: 'Your name', email: 'you@example.com', message: 'How can we help?' },
+			required: { name: 'Enter your name.', email: 'Enter your email address.', message: 'Write your message.' },
+			tooLong: (max) => `Use ${formatCount('en', max)} characters or fewer.`,
+			invalidEmail: 'Enter an email address like you@example.com.',
+			honeypot: 'Leave this field empty',
+			submit: 'Send message',
+			sending: 'Sending…',
+			sent: { title: 'Message sent. Thank you.', body: 'We read every message and will reply by email.' },
+			failed: {
+				invalid: 'Some of these details weren’t accepted. Check them and try again.',
+				rateLimited: 'You’ve sent too many messages for now. Try again later.',
+				generic: 'Your message couldn’t be sent. Try again in a moment.',
+			},
+		},
 		cookies: {
 			label: 'Cookie consent',
 			body: 'We’d like to use analytics cookies to understand how vomatt is used. Sign-in and language cookies are always on.',
@@ -134,10 +170,28 @@ export const MESSAGES: Record<Locale, Messages> = {
 	},
 	zh: {
 		header: { openApp: '開啟 vomatt' },
-		footer: { navLabel: '法律資訊', about: '關於', terms: '服務條款', privacy: '隱私權政策', cookies: 'Cookie 政策' },
+		footer: { navLabel: '網站', about: '關於', contact: '聯絡我們', terms: '服務條款', privacy: '隱私權政策', cookies: 'Cookie 政策' },
 		languageSwitcher: { label: '語言' },
 		notFound: { title: '找不到頁面', body: '我們找不到你要找的內容。', home: '回到首頁' },
 		page: { lastUpdated: '最後更新' },
+		contact: {
+			title: '聯絡我們',
+			intro: '對 vomatt、某則投票或你的帳號有疑問嗎？傳訊息給我們，我們會以電子郵件回覆。',
+			labels: { name: '名字', email: '電子郵件', message: '訊息' },
+			placeholders: { name: '你的名字', email: 'you@example.com', message: '有什麼我們可以幫忙的？' },
+			required: { name: '請輸入你的名字。', email: '請輸入你的電子郵件地址。', message: '請輸入訊息內容。' },
+			tooLong: (max) => `請在 ${formatCount('zh', max)} 個字元以內。`,
+			invalidEmail: '請輸入有效的電子郵件地址，例如 you@example.com。',
+			honeypot: '此欄位請留空',
+			submit: '送出訊息',
+			sending: '傳送中…',
+			sent: { title: '訊息已送出，謝謝你。', body: '我們會閱讀每一則訊息，並以電子郵件回覆你。' },
+			failed: {
+				invalid: '部分資料未被接受，請檢查後再試一次。',
+				rateLimited: '你目前傳送的訊息太多了，請稍後再試。',
+				generic: '訊息無法送出，請稍後再試。',
+			},
+		},
 		cookies: {
 			label: 'Cookie 同意',
 			body: '我們想使用分析 Cookie 來了解 vomatt 的使用情形。登入與語言 Cookie 會一直啟用。',
