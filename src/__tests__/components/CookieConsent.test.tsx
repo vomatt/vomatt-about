@@ -40,11 +40,11 @@ describe('CookieConsent', () => {
 		expect(screen.queryByTestId('tracking')).not.toBeInTheDocument();
 	});
 
-	it('asks in Chinese on a Chinese page, linking to the Chinese Cookies Policy', () => {
+	it('asks in Chinese on a Chinese page, linking to the Chinese Privacy Policy, where the cookies are listed', () => {
 		render(<CookieConsent locale="zh" integrations={integrations} />);
 		expect(screen.getByRole('region', { name: 'Cookie 同意' })).toBeInTheDocument();
 		expect(screen.getByRole('button', { name: '接受分析' })).toBeInTheDocument();
-		expect(screen.getByRole('link', { name: 'Cookie 政策' })).toHaveAttribute('href', '/zh/cookies-policy');
+		expect(screen.getByRole('link', { name: '隱私權政策' })).toHaveAttribute('href', '/zh/privacy-policy');
 	});
 
 	it('remembers an earlier Accept', () => {

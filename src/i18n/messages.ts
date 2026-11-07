@@ -11,7 +11,7 @@ export const META_GAP = '\u2003';
  */
 export type Messages = {
 	header: { openApp: string };
-	footer: { navLabel: string; about: string; contact: string; terms: string; privacy: string; cookies: string };
+	footer: { navLabel: string; about: string; contact: string; terms: string; privacy: string };
 	languageSwitcher: { label: string };
 	notFound: { title: string; body: string; home: string };
 	page: { lastUpdated: string };
@@ -86,7 +86,7 @@ type UseCaseMock = { author: string; ends: string; meta: string };
 export const MESSAGES: Record<Locale, Messages> = {
 	en: {
 		header: { openApp: 'Open vomatt' },
-		footer: { navLabel: 'Site', about: 'About', contact: 'Contact', terms: 'Terms', privacy: 'Privacy', cookies: 'Cookies' },
+		footer: { navLabel: 'Site', about: 'About', contact: 'Contact', terms: 'Terms', privacy: 'Privacy' },
 		languageSwitcher: { label: 'Language' },
 		notFound: {
 			title: 'Page not found',
@@ -115,7 +115,7 @@ export const MESSAGES: Record<Locale, Messages> = {
 		cookies: {
 			label: 'Cookie consent',
 			body: 'We’d like to use analytics cookies to understand how vomatt is used. Sign-in and language cookies are always on.',
-			policy: 'Cookies Policy',
+			policy: 'Privacy Policy',
 			accept: 'Accept analytics',
 			decline: 'Decline',
 			settings: 'Cookie settings',
@@ -170,7 +170,7 @@ export const MESSAGES: Record<Locale, Messages> = {
 	},
 	zh: {
 		header: { openApp: '開啟 vomatt' },
-		footer: { navLabel: '網站', about: '關於', contact: '聯絡我們', terms: '服務條款', privacy: '隱私權政策', cookies: 'Cookie 政策' },
+		footer: { navLabel: '網站', about: '關於', contact: '聯絡我們', terms: '服務條款', privacy: '隱私權政策' },
 		languageSwitcher: { label: '語言' },
 		notFound: { title: '找不到頁面', body: '我們找不到你要找的內容。', home: '回到首頁' },
 		page: { lastUpdated: '最後更新' },
@@ -195,7 +195,7 @@ export const MESSAGES: Record<Locale, Messages> = {
 		cookies: {
 			label: 'Cookie 同意',
 			body: '我們想使用分析 Cookie 來了解 vomatt 的使用情形。登入與語言 Cookie 會一直啟用。',
-			policy: 'Cookie 政策',
+			policy: '隱私權政策',
 			accept: '接受分析',
 			decline: '拒絕',
 			settings: 'Cookie 設定',

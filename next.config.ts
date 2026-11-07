@@ -1,5 +1,7 @@
 import type { NextConfig } from 'next';
 
+import { movedPageRedirects } from './src/lib/movedPages';
+
 const nextConfig: NextConfig = {
 	experimental: {
 		agentFeedback: true,
@@ -24,6 +26,10 @@ const nextConfig: NextConfig = {
 		],
 	},
 	poweredByHeader: false,
+	// Old links to a page that moved into another still land there
+	async redirects() {
+		return movedPageRedirects();
+	},
 	async headers() {
 		return [
 			{

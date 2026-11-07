@@ -55,7 +55,7 @@ export function CookieConsent({ locale, integrations }: { locale: Locale; integr
 		>
 			<p className="text-sm">
 				{copy.body}{' '}
-				<Link href={localizedPath(locale, '/cookies-policy')} className="underline underline-offset-2">
+				<Link href={localizedPath(locale, '/privacy-policy')} className="underline underline-offset-2">
 					{copy.policy}
 				</Link>
 			</p>
