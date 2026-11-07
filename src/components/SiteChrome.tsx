@@ -37,7 +37,7 @@ export function SiteFooter({ locale, written }: { locale: Locale; written: Writt
 						<Link
 							key={path}
 							href={localizedPath(locale, path)}
-							className="inline-flex min-h-11 items-center hover:text-foreground"
+							className="inline-flex min-h-11 items-center transition-colors hover:text-foreground"
 						>
 							{footer[label]}
 						</Link>

@@ -1,4 +1,3 @@
-import clsx from 'clsx';
 import NextLink from 'next/link';
 import React from 'react';
 
@@ -14,7 +13,6 @@ type CMSLinkType = {
 	children?: React.ReactNode;
 	className?: string;
 	isNewTab?: boolean;
-	isButton?: boolean;
 	tabIndex?: number;
 	onClick?: () => void;
 };
@@ -26,7 +24,6 @@ const CMSLink: React.FC<CMSLinkType> = ({
 	className,
 	ariaLabel,
 	isNewTab,
-	isButton,
 	...props
 }) => {
 	if (!link?.href) {
@@ -47,9 +44,7 @@ const CMSLink: React.FC<CMSLinkType> = ({
 			rel={isOpenNewTab ? 'noopener noreferrer' : ''}
 			// The visible text names the link (WCAG 2.5.3); the destination only names one with nothing to read
 			aria-label={ariaLabel || (title || children ? undefined : `Go to ${route}`)}
-			className={clsx(className, {
-				btn: isButton,
-			})}
+			className={className}
 			{...props}
 		>
 			{title || children}

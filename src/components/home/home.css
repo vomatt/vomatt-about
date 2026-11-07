@@ -145,7 +145,7 @@
 	.home-mock :is(.home-placeholder, .home-question, .home-option-text, .home-chip, .home-voted, .home-vote-row, .home-seal-row, .home-caption, .home-footer-text, .home-mark, .home-check, .home-stamp, .home-your-vote, .home-percent, .home-notice) {
 		transition-property: opacity, translate, scale;
 		transition-duration: 220ms;
-		transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+		transition-timing-function: var(--ease-settle);
 	}
 	.home-chosen {
 		transition:
@@ -154,13 +154,13 @@
 			border-color 300ms ease-out;
 	}
 	.home-bar {
-		transition: scale 800ms cubic-bezier(0.22, 1, 0.36, 1);
+		transition: scale 800ms var(--ease-settle);
 	}
 	.home-slot,
 	.home-lead {
 		transition:
-			grid-template-columns 260ms cubic-bezier(0.22, 1, 0.36, 1),
-			margin-right 260ms cubic-bezier(0.22, 1, 0.36, 1);
+			grid-template-columns 260ms var(--ease-settle),
+			margin-right 260ms var(--ease-settle);
 	}
 	.home-mock .home-chip {
 		transition-property: opacity, translate, scale, background-color;

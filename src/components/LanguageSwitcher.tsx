@@ -34,7 +34,7 @@ export function LanguageSwitcher({ locale, label, written }: { locale: Locale; l
 					lang={LOCALES[other].htmlLang}
 					hrefLang={LOCALES[other].htmlLang}
 					onClick={keepSearchAndHash}
-					className="inline-flex min-h-11 items-center hover:text-foreground"
+					className="inline-flex min-h-11 items-center transition-colors hover:text-foreground"
 				>
 					{LOCALES[other].label}
 				</a>
