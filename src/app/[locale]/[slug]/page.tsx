@@ -5,6 +5,7 @@ import { CookieSettingsButton } from '@/components/CookieConsent';
 import PageGeneral from '@/components/PageGeneral';
 import { getLocale } from '@/i18n/server';
 import defineMetadata from '@/lib/defineMetadata';
+import { getSiteSettings } from '@/lib/siteSettings';
 import { sanityFetch } from '@/sanity/lib/live';
 import { localeParams, pageGeneralQuery, pageGeneralSlugsQuery } from '@/sanity/lib/queries';
 
@@ -35,12 +36,13 @@ export async function generateMetadata(
 
 export default async function PageSlugRoute({ params }: PageProps<'/[locale]/[slug]'>) {
 	const { slug } = await params;
-	const data = await getPage(slug);
+	const isCookiesPolicy = slug === 'cookies-policy';
+	const [data, settings] = await Promise.all([getPage(slug), isCookiesPolicy ? getSiteSettings() : null]);
 	if (!data) notFound();
 
 	return (
 		<PageGeneral data={data}>
-			{slug === 'cookies-policy' && <CookieSettingsButton locale={data.language} />}
+			{isCookiesPolicy && <CookieSettingsButton locale={data.language} integrations={settings?.integrations} />}
 		</PageGeneral>
 	);
 }

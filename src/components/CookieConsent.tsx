@@ -29,13 +29,15 @@ function subscribe(listener: () => void) {
 	return () => listeners.delete(listener);
 }
 
+const hasAnalytics = (integrations?: Integrations | null) =>
+	!!(integrations?.gaIDs?.some(Boolean) || integrations?.gtmIDs?.some(Boolean));
+
 /** Asks before loading analytics; renders nothing when no analytics ID is set in Sanity. */
 export function CookieConsent({ locale, integrations }: { locale: Locale; integrations?: Integrations | null }) {
 	// undefined on the server, so the banner doesn't flash for returning visitors
 	const consent = useSyncExternalStore(subscribe, readConsent, () => undefined);
 
-	const hasAnalytics = !!(integrations?.gaIDs?.some(Boolean) || integrations?.gtmIDs?.some(Boolean));
-	if (!hasAnalytics) return null;
+	if (!hasAnalytics(integrations)) return null;
 
 	const choose = (value: Consent) => {
 		document.cookie = consentCookie(value, window.location.hostname);
@@ -73,8 +75,8 @@ export function CookieConsent({ locale, integrations }: { locale: Locale; integr
 	);
 }
 
-/** Clears the saved choice so the banner asks again; reloads if analytics already ran. */
-export function CookieSettingsButton({ locale }: { locale: Locale }) {
+/** Clears the saved choice so the banner asks again; reloads if analytics already ran. Disabled, with a note, while analytics is off. */
+export function CookieSettingsButton({ locale, integrations }: { locale: Locale; integrations?: Integrations | null }) {
 	const reopen = () => {
 		const wasGranted = readConsent() === 'granted';
 		document.cookie = consentCookie('', window.location.hostname);
@@ -82,9 +84,24 @@ export function CookieSettingsButton({ locale }: { locale: Locale }) {
 		else listeners.forEach((listener) => listener());
 	};
 
+	const copy = MESSAGES[locale].cookies;
+	const off = !hasAnalytics(integrations);
 	return (
-		<button type="button" className={buttonVariants({ variant: 'outline', className: 'mt-8' })} onClick={reopen}>
-			{MESSAGES[locale].cookies.settings}
-		</button>
+		<div className="mt-8">
+			<button
+				type="button"
+				className={buttonVariants({ variant: 'outline' })}
+				onClick={reopen}
+				disabled={off}
+				aria-describedby={off ? 'cookie-settings-off' : undefined}
+			>
+				{copy.settings}
+			</button>
+			{off && (
+				<p id="cookie-settings-off" className="mt-2 text-sm text-muted-foreground">
+					{copy.settingsOff}
+				</p>
+			)}
+		</div>
 	);
 }

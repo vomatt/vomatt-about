@@ -60,12 +60,19 @@ describe('CookieSettingsButton', () => {
 		render(
 			<>
 				<CookieConsent locale="en" integrations={integrations} />
-				<CookieSettingsButton locale="en" />
+				<CookieSettingsButton locale="en" integrations={integrations} />
 			</>
 		);
 		expect(screen.queryByRole('button', { name: /accept/i })).not.toBeInTheDocument();
 		fireEvent.click(screen.getByRole('button', { name: /cookie settings/i }));
 		expect(screen.getByRole('button', { name: /accept/i })).toBeInTheDocument();
+	});
+
+	it('is disabled, and says why, while no analytics ID is set', () => {
+		render(<CookieSettingsButton locale="en" integrations={{ gaIDs: [], gtmIDs: null }} />);
+		const button = screen.getByRole('button', { name: /cookie settings/i });
+		expect(button).toBeDisabled();
+		expect(button).toHaveAccessibleDescription(/no analytics cookies are set/);
 	});
 });
 

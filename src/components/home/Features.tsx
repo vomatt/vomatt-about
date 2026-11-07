@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 
 import { KeyRound, RefreshCw, Reply } from '@/components/ui/SvgIcons';
 import { type Locale, LOCALES, locales } from '@/i18n/locales';
-import { formatCount, MESSAGES } from '@/i18n/messages';
+import { formatCount, MESSAGES, META_GAP } from '@/i18n/messages';
 import { cn } from '@/lib/utils';
 
 import type { HomeContent } from './content';
@@ -55,7 +55,8 @@ function specimens(locale: Locale): ReactNode[] {
 			<Avatar name="boba" className="size-7" />
 			<div className="flex min-w-0 flex-col gap-1 text-[13px] leading-snug">
 				<p>
-					<span className="font-medium text-foreground">{copy.commentAuthor}</span>{' '}
+					<span className="font-medium text-foreground">{copy.commentAuthor}</span>
+					{META_GAP}
 					<span className="text-muted-foreground">{copy.commentAge}</span>
 				</p>
 				<p className="text-foreground">

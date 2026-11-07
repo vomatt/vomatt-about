@@ -12,9 +12,12 @@ export const imageBuilder = createImageUrlBuilder({
 	dataset: dataset || '',
 });
 
-// Open Graph share image, 1200px wide
+// Open Graph share image, 1200px wide. Not every link preview (LinkedIn) reads WebP, so JPG,
+// or PNG when the upload is one, to keep its transparency. An asset id ends in its format: image-<hash>-1200x630-png
 export function buildShareImageUrl(image: SanityImageSource) {
-	return imageBuilder.image(image).format('webp').width(1200).url();
+	const source = image as { _ref?: string; asset?: { _ref?: string } } | null;
+	const id = source?._ref ?? source?.asset?._ref;
+	return imageBuilder.image(image).format(id?.endsWith('-png') ? 'png' : 'jpg').width(1200).url();
 }
 
 type BuildImageSrcOptions = {
