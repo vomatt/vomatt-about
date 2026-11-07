@@ -86,7 +86,7 @@ export default async function RootLayout({ children }: LayoutProps<'/[locale]'>)
 			<body className="flex min-h-svh flex-col font-sans text-foreground">
 				<SiteHeader locale={locale} />
 				<main id="main" className="w-full flex-1 px-contain pt-8 pb-16">
-					<div className="mx-auto w-full max-w-main wide-frame:max-w-page">{children}</div>
+					<div className="mx-auto w-full max-w-frame">{children}</div>
 				</main>
 				<SiteFooter locale={locale} written={written} />
 				<CookieConsent locale={locale} integrations={settings?.integrations} />
