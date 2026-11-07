@@ -75,7 +75,7 @@ describe('HomePage', () => {
 		expect(screen.getByRole('link', { name: '隱私權政策' })).toHaveAttribute('href', '/zh/privacy-policy');
 		expect(screen.getAllByText('投票結束後才會公開結果').length).toBeGreaterThan(0);
 		expect(screen.queryByText('Results are revealed when the poll ends')).not.toBeInTheDocument();
-		expect(container.querySelector('[data-wide-frame]')).toHaveAttribute('lang', 'zh-TW');
+		expect(container.firstElementChild).toHaveAttribute('lang', 'zh-TW');
 	});
 
 	it('falls back to the English homepage, mock polls and all, marked as English', async () => {
@@ -84,7 +84,7 @@ describe('HomePage', () => {
 			screen.getByRole('heading', { level: 1, name: 'Ask everyone. Hear what they really think.' })
 		).toBeInTheDocument();
 		expect(screen.getAllByText('Results are revealed when the poll ends').length).toBeGreaterThan(0);
-		expect(container.querySelector('[data-wide-frame]')).toHaveAttribute('lang', 'en');
+		expect(container.firstElementChild).toHaveAttribute('lang', 'en');
 	});
 
 	it('is not found when Sanity has no homepage', async () => {

@@ -17,7 +17,7 @@ const FOOTER_LINKS: { path: string; label: keyof Messages['footer'] }[] = [
 export function SiteHeader({ locale }: { locale: Locale }) {
 	return (
 		<header className="border-b border-border px-contain">
-			<div className="mx-auto flex h-14 max-w-frame items-center justify-between">
+			<div className="mx-auto flex h-14 max-w-page items-center justify-between">
 				<BrandLink href={localizedPath(locale, '/')} className="w-20" />
 				<a href={process.env.NEXT_PUBLIC_APP_URL} className={buttonVariants({ size: 'sm' })}>
 					{MESSAGES[locale].header.openApp}
@@ -31,7 +31,7 @@ export function SiteFooter({ locale, written }: { locale: Locale; written: Writt
 	const { footer, languageSwitcher } = MESSAGES[locale];
 	return (
 		<footer className="border-t border-border px-contain">
-			<div className="mx-auto flex max-w-frame flex-wrap items-center justify-between gap-x-5 py-5 text-[14px] text-muted-foreground">
+			<div className="mx-auto flex max-w-page flex-wrap items-center justify-between gap-x-5 py-5 text-[14px] text-muted-foreground">
 				<nav aria-label={footer.navLabel} className="flex flex-wrap gap-x-5">
 					{FOOTER_LINKS.map(({ path, label }) => (
 						<Link
