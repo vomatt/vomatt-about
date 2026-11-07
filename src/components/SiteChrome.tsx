@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
 import { BrandLink } from '@/components/BrandLink';
-import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { LanguageSwitcher, type WrittenPaths } from '@/components/LanguageSwitcher';
 import { buttonVariants } from '@/components/ui/Button';
 import { type Locale, localizedPath } from '@/i18n/locales';
 import { MESSAGES,type Messages } from '@/i18n/messages';
@@ -27,7 +27,7 @@ export function SiteHeader({ locale }: { locale: Locale }) {
 	);
 }
 
-export function SiteFooter({ locale }: { locale: Locale }) {
+export function SiteFooter({ locale, written }: { locale: Locale; written: WrittenPaths }) {
 	const { footer, languageSwitcher } = MESSAGES[locale];
 	return (
 		<footer className="border-t border-border">
@@ -43,7 +43,7 @@ export function SiteFooter({ locale }: { locale: Locale }) {
 						</Link>
 					))}
 				</nav>
-				<LanguageSwitcher locale={locale} label={languageSwitcher.label} />
+				<LanguageSwitcher locale={locale} label={languageSwitcher.label} written={written} />
 			</div>
 		</footer>
 	);
