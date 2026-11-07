@@ -7,6 +7,9 @@ const nextConfig: NextConfig = {
 		agentFeedback: true,
 	},
 	cacheComponents: true,
+	// No per-instance copy of `use cache` entries: /api/revalidate expires tags only on the
+	// instance it runs on, so a warm instance would re-render a page with pre-publish content
+	cacheMaxMemorySize: 0,
 	partialPrefetching: true,
 	turbopack: {
 		rules: {

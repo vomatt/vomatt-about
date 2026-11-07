@@ -25,7 +25,7 @@ import { pageGeneralQuery } from '@/sanity/lib/queries'
 const { data } = await sanityFetch({ query: pageGeneralQuery, params: { slug } })
 ```
 
-`sanityFetch` is a `'use cache'` function: one request returns the content and its Sanity sync tags, which it tags as `sanity:<syncTag>` (or `sanity:untracked` when there are none or more than 128). In production with `SANITY_REVALIDATE_SECRET` set it refreshes hourly as a fallback to publish expiry; elsewhere every 60s. On publish, vomatt-admin's `invalidate-tags` Sanity Function POSTs `{ syncTags }` to `/api/revalidate`, which expires those tags and `sanity:untracked` with `{ expire: 0 }`.
+`sanityFetch` is a `'use cache'` function: one request returns the content and its Sanity sync tags, which it tags as `sanity:<syncTag>` (or `sanity:untracked` when there are none or more than 128). In production with `SANITY_REVALIDATE_SECRET` set it refreshes hourly as a fallback to publish expiry; elsewhere every 60s. On publish, vomatt-admin's `invalidate-tags` Sanity Function POSTs `{ syncTags }` to `/api/revalidate`, which expires those tags and `sanity:untracked` with `{ expire: 0 }`. `cacheMaxMemorySize: 0` keeps that working on Vercel: the default `'use cache'` handler is in-memory per instance and only the instance that ran `/api/revalidate` learns the tags expired, so a warm instance re-rendering an expired page would reuse its pre-publish content. With it off, the prerendered pages (shared, expired by tag across instances) are the only cache and a re-render always refetches.
 
 ### Languages
 
