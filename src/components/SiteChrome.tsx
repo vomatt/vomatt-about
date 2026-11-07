@@ -9,6 +9,7 @@ import { MESSAGES,type Messages } from '@/i18n/messages';
 // Sanity's header and footer menus are empty, so the links live here until they're filled in
 const FOOTER_LINKS: { path: string; label: keyof Messages['footer'] }[] = [
 	{ path: '/about', label: 'about' },
+	{ path: '/contact', label: 'contact' },
 	{ path: '/terms-of-service', label: 'terms' },
 	{ path: '/privacy-policy', label: 'privacy' },
 	{ path: '/cookies-policy', label: 'cookies' },
