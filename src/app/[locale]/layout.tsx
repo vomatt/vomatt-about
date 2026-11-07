@@ -8,6 +8,7 @@ import { CookieConsent } from '@/components/CookieConsent';
 import { SiteFooter, SiteHeader } from '@/components/SiteChrome';
 import { LOCALES, locales } from '@/i18n/locales';
 import { getLocale } from '@/i18n/server';
+import { getOtherLanguagePaths } from '@/lib/writtenPages';
 import { buildShareImageUrl, imageBuilder } from '@/sanity/lib/image';
 import { sanityFetch } from '@/sanity/lib/live';
 import { siteSharingQuery } from '@/sanity/lib/queries';
@@ -85,7 +86,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function RootLayout({ children }: LayoutProps<'/[locale]'>) {
 	const locale = await getLocale();
-	const settings = await getSiteSettings();
+	const [settings, written] = await Promise.all([getSiteSettings(), getOtherLanguagePaths(locale)]);
 
 	return (
 		<html
@@ -97,7 +98,7 @@ export default async function RootLayout({ children }: LayoutProps<'/[locale]'>)
 				<main id="main" className="w-full flex-1 px-contain pt-8 pb-16">
 					<div className="mx-auto w-full max-w-main wide-frame:max-w-page">{children}</div>
 				</main>
-				<SiteFooter locale={locale} />
+				<SiteFooter locale={locale} written={written} />
 				<CookieConsent locale={locale} integrations={settings?.integrations} />
 			</body>
 		</html>
