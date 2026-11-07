@@ -11,6 +11,7 @@ import { HowItWorks } from '@/components/home/HowItWorks';
 import { UseCases } from '@/components/home/UseCases';
 import { VotePromise } from '@/components/home/VotePromise';
 import { WhySealed } from '@/components/home/WhySealed';
+import { WideFrame } from '@/components/home/WideFrame';
 import { LOCALES } from '@/i18n/locales';
 import { getLocale } from '@/i18n/server';
 import defineMetadata from '@/lib/defineMetadata';
@@ -36,8 +37,8 @@ export default async function HomePage() {
 	// The mock polls speak the language the copy beside them is written in
 	const locale = data.language;
 	return (
-		// Wide frame: the header, footer and main column take the page width (max-w-page) here
-		<div data-wide-frame lang={LOCALES[locale].htmlLang} className="flex flex-col gap-24 md:gap-32">
+		<div lang={LOCALES[locale].htmlLang} className="flex flex-col gap-24 md:gap-32">
+			<WideFrame />
 			<Hero content={data.hero} locale={locale} />
 			<HowItWorks content={data.howItWorks} locale={locale} />
 			<WhySealed content={data.whySealed} locale={locale} />

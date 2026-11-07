@@ -62,15 +62,14 @@
 @custom-variant data-horizontal (&:where([data-orientation="horizontal"]));
 @custom-variant data-vertical (&:where([data-orientation="vertical"]));
 
-/* A page that spans the wide frame (the homepage, data-wide-frame) widens the header, footer and main
-   column with it, so the logo and the footer links line up with its content */
-@custom-variant wide-frame (&:where(:root:has([data-wide-frame]) *));
-/* The header, footer and main column's shared width, inside their px-contain padding, so the three stay aligned */
+/* The main column's width, inside its px-contain padding. The homepage widens it to the page width by
+   setting --frame-width to --frame-width-wide (WideFrame), which lives here so Tailwind always emits
+   --container-page. */
 @utility max-w-frame {
-	max-width: var(--container-main);
-	@variant wide-frame {
-		max-width: var(--container-page);
-	}
+	max-width: var(--frame-width, var(--container-main));
+}
+:root {
+	--frame-width-wide: var(--container-page);
 }
 
 :root {
