@@ -65,8 +65,7 @@ const callToActionFields = defineQuery(`
 	label,
 	link {
 		${linkFields}
-	},
-	"isButton": true
+	}
 `);
 
 const portableTextContentFields = defineQuery(`

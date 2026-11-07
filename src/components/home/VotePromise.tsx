@@ -27,7 +27,7 @@ export function VotePromise({ content }: { content: HomeContent['promise'] }) {
 						</TideRule>
 					))}
 				</TideRules>
-				<div className="text-[15px] leading-[1.6] text-muted-foreground [&_a]:text-foreground [&_a]:hover:text-muted-foreground">
+				<div className="text-[15px] leading-[1.6] text-muted-foreground [&_.text-link]:text-foreground [&_.text-link]:hover:text-muted-foreground">
 					<CustomPortableText blocks={content.footnote} />
 				</div>
 			</div>

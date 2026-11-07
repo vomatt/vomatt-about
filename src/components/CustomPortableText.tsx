@@ -10,6 +10,7 @@ import React from 'react';
 
 import CMSLink from '@/components/CMSLink';
 import Img from '@/components/Image';
+import { buttonVariants } from '@/components/ui/Button';
 
 type TableValue = {
 	rows: { _key: string; cells: string[] }[];
@@ -85,14 +86,14 @@ const PortableTextComponents: PortableTextComponentsType = {
 	marks: {
 		link: ({ value, children }) => {
 			return (
-				<CMSLink link={value} className="underline underline-offset-2">
+				<CMSLink link={value} className="text-link">
 					{children}
 				</CMSLink>
 			);
 		},
 		callToAction: ({ value, children }) => {
 			return (
-				<CMSLink link={value.link} isButton={true}>
+				<CMSLink link={value.link} className={buttonVariants()}>
 					{children}
 				</CMSLink>
 			);

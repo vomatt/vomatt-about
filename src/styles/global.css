@@ -133,6 +133,8 @@
 	--avatar-sky: oklch(0.92 0.03 230);
 	--avatar-peach: oklch(0.909 0.030 52.7);
 	--avatar-lavender: oklch(0.914 0.017 304.8);
+	/* Quick out, long settle: the homepage's reveals and the accordion's slide (read in script too, so a plain variable) */
+	--ease-settle: cubic-bezier(0.22, 1, 0.36, 1);
 	/* Buttons; cards are rounded-2xl (16px), rows and fields rounded-xl (12px) */
 	--radius: 0.625rem;
 	/* The sidebar is one step deeper than the canvas; everything else aliases the base */
@@ -339,6 +341,12 @@ html:has([data-slot='tabs-list'][data-sticky], [data-sticky-bar]) {
 	html {
 		scrollbar-gutter: stable;
 	}
+	/* In-page anchors (the hero's "How it works") glide; Next turns it off for route changes */
+	@media (prefers-reduced-motion: no-preference) {
+		html {
+			scroll-behavior: smooth;
+		}
+	}
 
 	body {
 		@apply bg-background text-foreground;
@@ -492,9 +500,6 @@ html:has([data-slot='tabs-list'][data-sticky], [data-sticky-bar]) {
 	/* Through --tw-leading, so the text-* size beside it keeps this leading */
 	@apply leading-[1.6];
 
-	& a {
-		@apply underline underline-offset-2;
-	}
 	& > * + * {
 		@apply mt-4;
 	}
@@ -509,6 +514,21 @@ html:has([data-slot='tabs-list'][data-sticky], [data-sticky-bar]) {
 	}
 	& ul {
 		@apply list-disc pl-5;
+	}
+}
+
+/* A link inside running text: underlined at rest so it never reads as a link by colour alone; the
+   line firms up to the text's own colour on hover */
+@utility text-link {
+	text-decoration-line: underline;
+	text-underline-offset: 2px;
+	text-decoration-color: color-mix(in oklch, currentColor 45%, transparent);
+	transition-property: color, text-decoration-color;
+	transition-duration: 150ms;
+	@media (hover: hover) {
+		&:hover {
+			text-decoration-color: currentColor;
+		}
 	}
 }
 
