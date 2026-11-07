@@ -35,7 +35,7 @@ export function UseCases({ content, locale }: { content: HomeContent['useCases']
 										<Avatar name={AVATARS[index]} className="size-7" />
 										<span className="truncate">{mocks[index].author}</span>
 									</span>
-									<span className={cn(chipClassName, 'bg-status-open-ends text-[10px]')}>{mocks[index].ends}</span>
+									<span className={cn(chipClassName, 'bg-status-open-ends')}>{mocks[index].ends}</span>
 								</div>
 								<p className="poll-title text-foreground">{useCase.question}</p>
 							</div>

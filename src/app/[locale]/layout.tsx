@@ -8,25 +8,15 @@ import { CookieConsent } from '@/components/CookieConsent';
 import { SiteFooter, SiteHeader } from '@/components/SiteChrome';
 import { LOCALES, locales } from '@/i18n/locales';
 import { getLocale } from '@/i18n/server';
+import { getSiteSettings } from '@/lib/siteSettings';
 import { getOtherLanguagePaths } from '@/lib/writtenPages';
 import { buildShareImageUrl, imageBuilder } from '@/sanity/lib/image';
-import { sanityFetch } from '@/sanity/lib/live';
-import { siteSharingQuery } from '@/sanity/lib/queries';
 
 const geistSans = Geist({ subsets: ['latin'], variable: '--font-geist-sans' });
 const geistMono = Geist_Mono({
 	subsets: ['latin'],
 	variable: '--font-geist-mono',
 });
-
-// The site still renders when Sanity is down, without its title and analytics
-const getSiteSettings = () =>
-	sanityFetch({ query: siteSharingQuery })
-		.then(({ data }) => data)
-		.catch((error) => {
-			console.error('Failed to load site settings from Sanity', error);
-			return null;
-		});
 
 export function generateStaticParams() {
 	return locales.map((locale) => ({ locale }));

@@ -1,12 +1,13 @@
 import { Check } from '@/components/ui/SvgIcons';
+import { META_GAP } from '@/i18n/messages';
 import { cn } from '@/lib/utils';
 
 // The app's own pieces (vomatt-web's BallotMotion, Seal, Results, StatusChip), drawn as still markup
 // for the homepage's mock polls. Decorative: callers hide them from assistive tech or label the whole mock.
 
-/** vomatt-web's chipClassName: a small uppercase pill; pair it with a `bg-*` tint. */
+/** vomatt-web's chipClassName: a small pill; pair it with a `bg-*` tint. */
 export const chipClassName =
-	'inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1 text-[11px] leading-4 font-semibold uppercase tracking-[0.06em] text-foreground';
+	'inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1 text-[11px] leading-4 font-medium text-foreground';
 
 /** One of the app's avatar drawings (public/avatars), 32px unless a size goes beside it. */
 export function Avatar({ name, className }: { name: string; className?: string }) {
@@ -108,7 +109,9 @@ export function ResultsNotice({
 			<SealMark />
 			<div className="flex min-w-0 flex-1 flex-col gap-0.5">
 				<p className="text-[15px] leading-snug text-foreground">
-					<span className="font-semibold">{label}</span> · {title}
+					<span className="font-semibold">{label}</span>
+					{META_GAP}
+					{title}
 				</p>
 				<p className="text-[12px] text-tide-foreground tabular-nums">{meta}</p>
 			</div>

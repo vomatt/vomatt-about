@@ -21,10 +21,15 @@ describe('buildImageSrc', () => {
 });
 
 describe('buildShareImageUrl', () => {
-	it('builds a 1200px webp url', () => {
+	it('builds a 1200px jpg url', () => {
 		const url = buildShareImageUrl(image);
 
 		expect(url).toContain('w=1200');
-		expect(url).toContain('fm=webp');
+		expect(url).toContain('fm=jpg');
+	});
+
+	it('keeps a PNG upload as PNG, so its transparency survives', () => {
+		expect(buildShareImageUrl({ _ref: 'image-abc123-1200x630-png' })).toContain('fm=png');
+		expect(buildShareImageUrl({ asset: { _ref: 'image-abc123-1200x630-png' } })).toContain('fm=png');
 	});
 });

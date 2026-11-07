@@ -37,9 +37,10 @@ Cool canvas, navy ink actions, two signals: Volt (`highlight`) marks what is you
   - Auth titles: 30px, leading 1.2, -0.02em (every auth step; in the auth dialog the step's title is the dialog's own 21px title)
   - Person names: `display-heading text-[26px] md:text-[30px]` on a profile; `text-2xl` elsewhere
   - CMS body 17px, leading 1.6, section headings 24px; coming soon headline 48px, leading 1.1
+- **Meta lines** separate their parts with space, not a glyph: `META_GAP` from `@/i18n/messages` (an em space, so it keeps its width and wraps like a space). ESLint rejects a middle dot (·) in source.
 - **Poll title** (card and preview): the `poll-title` utility (22px, weight 500, leading 1.2, -0.02em, balanced lines); cards add `md:text-[25px]`.
 - **Item title** (list rows): the `item-title` utility (16px, weight 500, -0.01em); leading goes beside it. Rail card titles are 15px (`PollSideCard`).
-- **Body** `text-[14px]` (card descriptions `text-base`; ballot and result options 16px, weight 500); **meta** `text-[12px]` in rows, `text-[14px]` on a poll card (author line, footer, the ballot's Tide lines, the results caption), `text-[13px]` in the rail; **chip** `text-[11px]` uppercase semibold, `.06em` tracking (`chipClassName`), 10px on a poll card.
+- **Body** `text-[14px]` (card descriptions `text-base`; ballot and result options 16px, weight 500); **meta** `text-[12px]` in rows, `text-[14px]` on a poll card (author line, footer, the ballot's Tide lines, the results caption), `text-[13px]` in the rail; **chip** `text-[11px]` sentence case, medium (`chipClassName`), on poll cards too.
 - Sidebar and More rows 14px, their group labels and segments 12px. The policy line under log in is 12px (`text-xs` is 11px here).
 - **Tab labels** (`TabsList variant="line"`) 15px. **Dialog titles** (`DialogTitle`, `AlertDialogTitle`) 21px, weight 500, -0.02em.
 - Inputs are `text-[16px]` on phones so iOS doesn't zoom (`text-base` is 15px).

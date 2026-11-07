@@ -59,8 +59,8 @@ export function PollMock({ locale, step, turnout, notify = false }: PollMockProp
 							{/* Takes no room until the vote is in, so the status chip keeps its place on a wrapped line */}
 							<span className="home-slot home-slot-voted">
 								<span>
-									<span className={cn('home-voted mr-2', chipClassName, 'bg-highlight text-[10px] text-highlight-foreground')}>
-										<Check size={12} strokeWidth={3} />
+									<span className={cn('home-voted mr-2', chipClassName, 'bg-highlight text-highlight-foreground')}>
+										<Check size={10} strokeWidth={3} />
 										{copy.voted}
 									</span>
 								</span>
@@ -70,7 +70,6 @@ export function PollMock({ locale, step, turnout, notify = false }: PollMockProp
 								className={cn(
 									'home-chip',
 									chipClassName,
-									'text-[10px]',
 									step === 3 ? 'bg-status-ended' : 'bg-status-open-ends'
 								)}
 							>

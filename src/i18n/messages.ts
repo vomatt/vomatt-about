@@ -1,5 +1,8 @@
 import { type Locale,LOCALES } from './locales';
 
+/** vomatt-web's META_GAP: parts of a meta line are separated by an em space, not a glyph. */
+export const META_GAP = '\u2003';
+
 /**
  * Interface strings: the site chrome and the homepage's mock polls. Page content lives in Sanity.
  * Wording follows vomatt-web's en/zh dictionaries where the same string appears in the app.
@@ -17,6 +20,7 @@ export type Messages = {
 		accept: string;
 		decline: string;
 		settings: string;
+		settingsOff: string;
 	};
 	home: {
 		/** The one poll the homepage follows; options pair with POLL_RESULTS by index. */
@@ -79,6 +83,7 @@ export const MESSAGES: Record<Locale, Messages> = {
 			accept: 'Accept analytics',
 			decline: 'Decline',
 			settings: 'Cookie settings',
+			settingsOff: 'Analytics is off, so no analytics cookies are set and there’s nothing to change.',
 		},
 		home: {
 			poll: {
@@ -87,7 +92,7 @@ export const MESSAGES: Record<Locale, Messages> = {
 				options: ['Thursday', 'Friday', 'Sunday'],
 			},
 			pollCard: {
-				age: '· 2d',
+				age: '2d',
 				voted: 'Voted',
 				ends: 'Ends Fri 20:00',
 				ended: 'Ended Fri',
@@ -103,27 +108,27 @@ export const MESSAGES: Record<Locale, Messages> = {
 				discuss: 'Discuss',
 				yourVote: 'your vote',
 			},
-			notice: { title: 'Results are in', meta: (option, count) => `${option} won · ${count} voted · now` },
+			notice: { title: 'Results are in', meta: (option, count) => `${option} won${META_GAP}${count} voted${META_GAP}now` },
 			heroLabel: (title, count) =>
 				`An open poll on vomatt: “${title}” ${count} people have voted, and the results stay sealed until it ends on Friday.`,
 			whySealed: { live: 'Updates with every vote', sealedUntil: 'Sealed until Fri 20:00' },
 			features: {
 				replaces: (option) => `Replaces your vote for ${option}`,
 				commentAuthor: '@mina',
-				commentAge: '· 2h',
+				commentAge: '2h',
 				comment: ['Friday, so the stalls can stay open late. ', '@jtan', ' would that work for you?'],
-				replies: 'Reply · 3 replies',
+				replies: `Reply${META_GAP}3 replies`,
 				followName: 'Jun Tan',
-				followMeta: '@jtan · 128 followers',
+				followMeta: `@jtan${META_GAP}128 followers`,
 				follow: 'Follow',
 				topics: ['Neighbourhood', 'Markets'],
 				passkey: 'Continue with a passkey',
 			},
 			useCases: [
-				{ author: '@studio_ops', ends: 'Ends Thu 18:00', meta: '18 voted · invite only' },
-				{ author: '@northside_books', ends: 'Ends Sun 21:00', meta: '42 voted · unlisted' },
+				{ author: '@studio_ops', ends: 'Ends Thu 18:00', meta: `18 voted${META_GAP}invite only` },
+				{ author: '@northside_books', ends: 'Ends Sun 21:00', meta: `42 voted${META_GAP}unlisted` },
 				{ author: '@elm_street', ends: 'Ends Mon 09:00', meta: '326 voted' },
-				{ author: '@jtan', ends: 'Ends in 6h', meta: '7 voted · unlisted' },
+				{ author: '@jtan', ends: 'Ends in 6h', meta: `7 voted${META_GAP}unlisted` },
 			],
 		},
 	},
@@ -140,6 +145,7 @@ export const MESSAGES: Record<Locale, Messages> = {
 			accept: '接受分析',
 			decline: '拒絕',
 			settings: 'Cookie 設定',
+			settingsOff: '分析功能目前已關閉，因此不會設定分析 Cookie，也沒有需要變更的選項。',
 		},
 		home: {
 			poll: {
@@ -148,7 +154,7 @@ export const MESSAGES: Record<Locale, Messages> = {
 				options: ['星期四', '星期五', '星期日'],
 			},
 			pollCard: {
-				age: '· 2 天',
+				age: '2 天',
 				voted: '已投票',
 				ends: '週五 20:00 截止',
 				ended: '週五結束',
@@ -164,27 +170,27 @@ export const MESSAGES: Record<Locale, Messages> = {
 				discuss: '討論',
 				yourVote: '你的選擇',
 			},
-			notice: { title: '結果出爐', meta: (option, count) => `${option}勝出 · ${count} 人已投票 · 剛剛` },
+			notice: { title: '結果出爐', meta: (option, count) => `${option}勝出${META_GAP}${count} 人已投票${META_GAP}剛剛` },
 			heroLabel: (title, count) =>
 				`vomatt 上一則進行中的投票：「${title}」已有 ${count} 人投票，結果在週五投票結束前保持密封。`,
 			whySealed: { live: '每一票都即時更新', sealedUntil: '密封至週五 20:00' },
 			features: {
 				replaces: (option) => `將取代你投給「${option}」的票`,
 				commentAuthor: '@mina',
-				commentAge: '· 2 小時',
+				commentAge: '2 小時',
 				comment: ['選星期五，攤位就能開晚一點。', '@jtan', ' 你那天可以嗎？'],
-				replies: '回覆 · 3 則回覆',
+				replies: `回覆${META_GAP}3 則回覆`,
 				followName: 'Jun Tan',
-				followMeta: '@jtan · 128 位追蹤者',
+				followMeta: `@jtan${META_GAP}128 位追蹤者`,
 				follow: '追蹤',
 				topics: ['社區', '市集'],
 				passkey: '使用通行密鑰繼續',
 			},
 			useCases: [
-				{ author: '@studio_ops', ends: '週四 18:00 截止', meta: '18 人已投票 · 僅限受邀者' },
-				{ author: '@northside_books', ends: '週日 21:00 截止', meta: '42 人已投票 · 不公開列出' },
+				{ author: '@studio_ops', ends: '週四 18:00 截止', meta: `18 人已投票${META_GAP}僅限受邀者` },
+				{ author: '@northside_books', ends: '週日 21:00 截止', meta: `42 人已投票${META_GAP}不公開列出` },
 				{ author: '@elm_street', ends: '週一 09:00 截止', meta: '326 人已投票' },
-				{ author: '@jtan', ends: '6 小時後截止', meta: '7 人已投票 · 不公開列出' },
+				{ author: '@jtan', ends: '6 小時後截止', meta: `7 人已投票${META_GAP}不公開列出` },
 			],
 		},
 	},
