@@ -135,7 +135,7 @@ const TILE = { scale: 0.58, radius: 0.22 };
 
 /**
  * The glossy mark on its tile with a paper ballot standing in the slot (`.mark-ballot`, which
- * `animate-ballot-drop-once` in global.css drops), clipped above the slot so it vanishes inside.
+ * `animate-ballot-drop` in global.css drops), clipped above the slot so it vanishes inside.
  * `idPrefix` keeps each inline copy's ids its own.
  */
 export function markLoaderSvg(idPrefix: string): string {
