@@ -12,7 +12,6 @@ const FOOTER_LINKS: { path: string; label: keyof Messages['footer'] }[] = [
 	{ path: '/contact', label: 'contact' },
 	{ path: '/terms-of-service', label: 'terms' },
 	{ path: '/privacy-policy', label: 'privacy' },
-	{ path: '/cookies-policy', label: 'cookies' },
 ];
 
 export function SiteHeader({ locale }: { locale: Locale }) {

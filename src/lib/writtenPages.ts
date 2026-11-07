@@ -1,5 +1,6 @@
 import type { WrittenPaths } from '@/components/LanguageSwitcher';
 import { isLocale, type Locale, locales } from '@/i18n/locales';
+import { MOVED_PAGES } from '@/lib/movedPages';
 import { sanityFetch } from '@/sanity/lib/live';
 import { sitemapQuery } from '@/sanity/lib/queries';
 
@@ -14,7 +15,7 @@ export async function getWrittenPages() {
 		(data ?? []) as { path: string; language: string }[]
 	).filter(
 		(page): page is { path: string; language: Locale } =>
-			isLocale(page.language) && !CODE_PAGES.includes(page.path)
+			isLocale(page.language) && !CODE_PAGES.includes(page.path) && !(page.path in MOVED_PAGES)
 	);
 	return [
 		...sanityPages,

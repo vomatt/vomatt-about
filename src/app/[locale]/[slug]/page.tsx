@@ -6,6 +6,7 @@ import { CookieSettingsButton } from '@/components/CookieConsent';
 import PageGeneral from '@/components/PageGeneral';
 import { getLocale } from '@/i18n/server';
 import defineMetadata from '@/lib/defineMetadata';
+import { MOVED_PAGES } from '@/lib/movedPages';
 import { getSiteSettings } from '@/lib/siteSettings';
 import { sanityFetch } from '@/sanity/lib/live';
 import { localeParams, pageGeneralQuery, pageGeneralSlugsQuery } from '@/sanity/lib/queries';
@@ -16,7 +17,9 @@ export const instant = false;
 // Every slug in every locale: a page without a translation shows its English original
 export async function generateStaticParams() {
 	const { data } = await sanityFetch({ query: pageGeneralSlugsQuery });
-	const slugs = new Set(((data ?? []) as { slug: string }[]).map(({ slug }) => slug));
+	const slugs = new Set(
+		((data ?? []) as { slug: string }[]).map(({ slug }) => slug).filter((slug) => !(`/${slug}` in MOVED_PAGES))
+	);
 	return [...slugs].map((slug) => ({ slug }));
 }
 
@@ -38,15 +41,16 @@ export async function generateMetadata(
 export default async function PageSlugRoute({ params }: PageProps<'/[locale]/[slug]'>) {
 	const { slug } = await params;
 	const isAbout = slug === 'about';
-	const isCookiesPolicy = slug === 'cookies-policy';
-	const [data, settings] = await Promise.all([getPage(slug), isCookiesPolicy ? getSiteSettings() : null]);
+	const data = await getPage(slug);
 	if (!data) notFound();
+	// The page that lists the cookies turns this on in Sanity, so the choice can be changed there
+	const settings = data.showCookieSettings ? await getSiteSettings() : null;
 
 	return (
 		<>
 			{isAbout && <BrandMark className="mb-8" />}
 			<PageGeneral data={data}>
-				{isCookiesPolicy && <CookieSettingsButton locale={data.language} integrations={settings?.integrations} />}
+				{data.showCookieSettings && <CookieSettingsButton locale={data.language} integrations={settings?.integrations} />}
 			</PageGeneral>
 		</>
 	);

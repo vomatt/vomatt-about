@@ -14,7 +14,7 @@ npx tsc --noEmit
 
 ## Architecture
 
-**vomatt-about** is the marketing site at about.vomatt.com: About and the legal pages (Privacy, Terms, Cookies). The app lives at vomatt.com in `vomatt-web` (sibling repo); the Sanity Studio and schemas live in `vomatt-admin`. All three share one Sanity project and dataset. Each document type has one consumer: this site owns `pGeneral`, `pHome`, `gHeader`, `gFooter`, `gAnnouncement`, `p404` and the page-builder modules; `vomatt-web` owns `pSignUp`; `settingsGeneral` and `settingsIntegration` are shared. Check vomatt-admin's schemas when a query here changes. `pGeneral` and `pHome` are localized one document per language (`language`: `en` | `zh`); a doc with no `language` is English.
+**vomatt-about** is the marketing site at about.vomatt.com: About and the legal pages (Privacy, Terms; the cookie list is a section of the Privacy Policy, and `src/lib/movedPages.ts` redirects the old `/cookies-policy`). The app lives at vomatt.com in `vomatt-web` (sibling repo); the Sanity Studio and schemas live in `vomatt-admin`. All three share one Sanity project and dataset. Each document type has one consumer: this site owns `pGeneral`, `pHome`, `gHeader`, `gFooter`, `gAnnouncement`, `p404` and the page-builder modules; `vomatt-web` owns `pSignUp`; `settingsGeneral` and `settingsIntegration` are shared. Check vomatt-admin's schemas when a query here changes. `pGeneral` and `pHome` are localized one document per language (`language`: `en` | `zh`); a doc with no `language` is English.
 
 Next.js 16 with Cache Components (`cacheComponents: true`). Read side in `src/sanity/{env.ts,lib/client.ts,lib/live.ts,lib/image.ts,lib/queries.ts}` on `@sanity/client` + `groq`:
 

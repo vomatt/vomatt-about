@@ -34,6 +34,15 @@ describe('written pages', () => {
 		]);
 	});
 
+	it('leaves out a page that moved into another, while Sanity still publishes it', async () => {
+		fetchMock.mockResolvedValue({ data: [{ path: '/cookies-policy', language: 'en' }, { path: '/privacy-policy', language: 'en' }] });
+		expect(await getWrittenPages()).toEqual([
+			{ path: '/privacy-policy', language: 'en' },
+			{ path: '/contact', language: 'en' },
+			{ path: '/contact', language: 'zh' },
+		]);
+	});
+
 	it('gives an English page only the Chinese paths', async () => {
 		expect(await getOtherLanguagePaths('en')).toEqual({ zh: ['/about', '/contact'] });
 	});
