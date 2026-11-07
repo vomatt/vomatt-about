@@ -31,16 +31,16 @@
 	}
 }
 
-/* Ballot drop (BrandMark): a paper ballot falls into the mark's slot once, clipped at the slot so
-   it vanishes inside. vomatt-web's loader loops the same keyframes. */
+/* Ballot drop (BrandMark): a paper ballot falls into the mark's slot on a loop, clipped at the slot
+   so it vanishes inside. A copy of vomatt-web's loader. */
 @keyframes ballot-drop {
 	0% { transform: translateY(-24px); opacity: 0; }
 	25% { transform: translateY(-14px); opacity: 1; }
 	70%, 100% { transform: translateY(36px); opacity: 1; }
 }
-@utility animate-ballot-drop-once {
+@utility animate-ballot-drop {
 	& .mark-ballot {
-		animation: ballot-drop 1.4s cubic-bezier(0.55, 0, 0.75, 0.4) 300ms both;
+		animation: ballot-drop 1.4s cubic-bezier(0.55, 0, 0.75, 0.4) infinite;
 	}
 	@media (prefers-reduced-motion: reduce) {
 		& .mark-ballot {
