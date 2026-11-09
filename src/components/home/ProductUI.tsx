@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils';
 
 // The app's own pieces (vomatt-web's BallotMotion, Seal, Results, StatusChip), drawn as still markup
 // for the homepage's mock polls. Decorative: callers hide them from assistive tech or label the whole mock.
+// The result deliberately marks the winner more strongly than the app does (bar, weight, 22px stamp); see home.css.
 
 /** vomatt-web's chipClassName: a small pill; pair it with a `bg-*` tint. */
 export const chipClassName =
@@ -71,7 +72,7 @@ export function SealMark({ size = 'sm', className }: { size?: keyof typeof SEAL_
 /** The red ballot stamp (a ring with a 卜 mark) on a winning result. */
 export function ElectedStamp({ className }: { className?: string }) {
 	return (
-		<svg viewBox="0 0 130 130" className={cn('size-[18px] shrink-0 text-elected', className)}>
+		<svg viewBox="0 0 130 130" className={cn('size-[22px] shrink-0 text-elected', className)}>
 			<circle cx="65" cy="65" r="60.3" fill="none" stroke="currentColor" strokeWidth="9.3" />
 			<path d="M65 2v126M63.5 63.5 19 108" fill="none" stroke="currentColor" strokeWidth="10" />
 		</svg>

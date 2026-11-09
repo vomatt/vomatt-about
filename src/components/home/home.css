@@ -3,7 +3,8 @@
  * Turbopack rule in next.config.ts reads every .css file as global, so CSS modules aren't available.
  * What each state looks like applies everywhere; how it moves between states sits under
  * prefers-reduced-motion: no-preference, so with reduced motion every state shows at once.
- * Only opacity and transforms move (and a few slots inside the card), so nothing shifts the page.
+ * Only opacity and transforms move (and a few slots inside the card, and the result's font weights),
+ * so nothing shifts the page.
  */
 
 /* Children share one grid cell, so swapping them never changes the size */
@@ -96,7 +97,7 @@
 	margin-right: 0;
 }
 .home-mock[data-step='3'] .home-lead-winner {
-	grid-template-columns: 18px;
+	grid-template-columns: 22px;
 	margin-right: 0.75rem;
 }
 
@@ -112,7 +113,7 @@
 	border-color: var(--border-strong);
 }
 
-/* The result bar: one neutral for every option; the winner is marked by its stamp, not its fill */
+/* The result bar: the muted neutral for every option and a deeper one for the winner, beside its stamp */
 .home-bar {
 	position: absolute;
 	inset: 0;
@@ -120,11 +121,22 @@
 	transform-origin: left;
 	scale: 0 1;
 }
+.home-winner .home-bar {
+	background-color: var(--bar-winner);
+}
 .home-mock[data-step='3'] .home-bar {
 	scale: var(--share) 1;
 }
 
-/* The viewer's option: the Volt tint and an ink line once chosen; on the result, the line alone */
+/* On the result the winner gains weight and the other options lose theirs */
+.home-mock[data-step='3'] li:not(.home-winner) .home-option-text {
+	font-weight: 400;
+}
+.home-mock[data-step='3'] .home-winner .home-option-text {
+	font-weight: 600;
+}
+
+/* The viewer's option: the Volt tint and an ink line once chosen; on the result, a quiet line beside the pill */
 .home-chosen {
 	position: absolute;
 	inset: 0;
@@ -137,13 +149,14 @@
 	opacity: 1;
 }
 .home-mock[data-step='3'] .home-chosen {
-	border-color: var(--foreground);
+	border-width: 1px;
+	border-color: var(--border-strong);
 	background-color: transparent;
 }
 
 @media (prefers-reduced-motion: no-preference) {
 	.home-mock :is(.home-placeholder, .home-question, .home-option-text, .home-chip, .home-voted, .home-vote-row, .home-seal-row, .home-caption, .home-footer-text, .home-mark, .home-check, .home-stamp, .home-your-vote, .home-percent, .home-notice) {
-		transition-property: opacity, translate, scale;
+		transition-property: opacity, translate, scale, font-weight;
 		transition-duration: 220ms;
 		transition-timing-function: var(--ease-settle);
 	}
@@ -151,7 +164,8 @@
 		transition:
 			opacity 200ms ease-out,
 			background-color 300ms ease-out,
-			border-color 300ms ease-out;
+			border-color 300ms ease-out,
+			border-width 300ms ease-out;
 	}
 	.home-bar {
 		transition: scale 800ms var(--ease-settle);
@@ -208,6 +222,9 @@
 	}
 	.home-mock[data-step='3'] .home-your-vote {
 		transition-delay: 700ms;
+	}
+	.home-mock[data-step='3'] .home-option-text {
+		transition-delay: 900ms;
 	}
 	.home-mock[data-step='3'] .home-stamp {
 		transition-duration: 300ms;
