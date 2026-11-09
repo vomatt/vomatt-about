@@ -89,7 +89,10 @@ export function PollMock({ locale, step, turnout, notify = false }: PollMockProp
 							<li
 								key={option.text}
 								style={{ '--i': index, '--share': option.percent / 100 } as CSSProperties}
-								className="relative flex min-h-14 items-center overflow-hidden rounded-xl px-5 py-2.5 text-[16px] font-medium"
+								className={cn(
+									'relative flex min-h-14 items-center overflow-hidden rounded-xl px-5 py-2.5 text-[16px] font-medium',
+									option.winner && 'home-winner'
+								)}
 							>
 								<span className="home-row-frame" />
 								<span className="home-bar" />
@@ -121,8 +124,8 @@ export function PollMock({ locale, step, turnout, notify = false }: PollMockProp
 								)}
 								<span
 									className={cn(
-										'home-percent relative ml-3 shrink-0 text-right text-[14px] tabular-nums',
-										!option.winner && 'text-muted-foreground'
+										'home-percent relative ml-3 shrink-0 text-right tabular-nums',
+										option.winner ? 'text-[15px] font-semibold' : 'text-[14px] font-normal text-muted-foreground'
 									)}
 								>
 									<Percent value={option.percent} show={step === 3} index={index} />

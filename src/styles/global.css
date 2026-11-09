@@ -87,6 +87,8 @@
 	--secondary-foreground: oklch(0.272 0.058 262.5);
 	--muted: oklch(0.955 0.004 265);
 	--muted-foreground: oklch(0.503 0.034 266);
+	/* The winning option's result bar: a step deeper than the muted bar beside it */
+	--bar-winner: oklch(0.92 0.006 265);
 	--accent: oklch(0.955 0.004 265);
 	--accent-foreground: oklch(0.272 0.058 262.5);
 	--destructive: oklch(0.501 0.178 28.7);
@@ -195,6 +197,7 @@ html:has([data-slot='tabs-list'][data-sticky], [data-sticky-bar]) {
 	--secondary-foreground: oklch(0.93 0.008 265);
 	--muted: oklch(0.245 0.012 265);
 	--muted-foreground: oklch(0.70 0.022 265);
+	--bar-winner: oklch(0.32 0.012 265);
 	--accent: oklch(0.245 0.012 265);
 	--accent-foreground: oklch(0.93 0.008 265);
 	--destructive: oklch(0.771 0.104 25);
