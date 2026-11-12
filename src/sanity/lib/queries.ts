@@ -50,15 +50,7 @@ export const imageMetaFields = defineQuery(`
 	crop,
 	customRatio,
 	hotspot,
-	"meta": asset-> {
-		"id": assetId,
-		"alt": coalesce(^.alt, altText),
-		"type": mimeType,
-		"width": metadata.dimensions.width,
-		"height": metadata.dimensions.height,
-		"aspectRatio": metadata.dimensions.aspectRatio,
-		"lqip": metadata.lqip
-	}
+	"alt": coalesce(alt, asset->altText)
 `);
 
 const callToActionFields = defineQuery(`
@@ -155,34 +147,10 @@ const pageModuleFields = defineQuery(`
 	_type == 'freeform' => {
 		${freeformFields}
 	},
-	_type == 'carousel' => {
+	// Not rendered here; the key keeps the list stable
+	_type in ['carousel', 'marquee'] => {
 		_type,
-		_key,
-		items[0...10], // Limit items for performance
-		autoplay,
-		autoplayInterval
-	},
-	_type == 'marquee' => {
-		_type,
-		_key,
-		items[]{
-			_type == 'simple' => {
-				_type,
-				text
-			},
-			_type == 'image' => {
-				_type,
-				"image": {
-					${imageMetaFields}
-				}
-			}
-		}[0...20], // Limit items for performance
-		speed,
-		reverse,
-		pausable,
-		showGradient,
-		"gradientColor": gradientColor->color.hex,
-		isMerged
+		_key
 	}
 `);
 

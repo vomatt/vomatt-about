@@ -1,20 +1,12 @@
-'use client';
-
 import {
 	PortableText,
 	type PortableTextBlock,
 	type PortableTextComponents as PortableTextComponentsType,
-	type PortableTextTypeComponentProps,
 } from '@portabletext/react';
-import React from 'react';
 
 import CMSLink from '@/components/CMSLink';
 import Img from '@/components/Image';
 import { buttonVariants } from '@/components/ui/Button';
-
-type TableValue = {
-	rows: { _key: string; cells: string[] }[];
-};
 
 const PortableTextComponents: PortableTextComponentsType = {
 	block: {
@@ -45,43 +37,13 @@ const PortableTextComponents: PortableTextComponentsType = {
 				width && height ? `${(height / width) * 100}%` : '56.25%';
 
 			return (
-				<>
-					<div
-						className="iframe-container"
-						dangerouslySetInnerHTML={{ __html: embedSnippet }}
-					/>
-					<style jsx>{`
-						.iframe-container {
-							position: relative;
-							height: 0;
-							overflow: hidden;
-							max-width: 100%;
-							padding-bottom: ${aspectRatio};
-						}
-						:global(.iframe-container iframe) {
-							position: absolute;
-							top: 0;
-							left: 0;
-							width: 100%;
-							height: 100%;
-						}
-					`}</style>
-				</>
+				<div
+					className="relative h-0 max-w-full overflow-hidden [&_iframe]:absolute [&_iframe]:inset-0 [&_iframe]:size-full"
+					style={{ paddingBottom: aspectRatio }}
+					dangerouslySetInnerHTML={{ __html: embedSnippet }}
+				/>
 			);
 		},
-		table: ({ value: node }: PortableTextTypeComponentProps<TableValue>) => (
-			<table>
-				<tbody>
-					{node?.rows.map((row) => (
-						<tr key={row._key}>
-							{row?.cells.map((cell, index) => (
-								<td key={row._key + index}>{cell}</td>
-							))}
-						</tr>
-					))}
-				</tbody>
-			</table>
-		),
 	},
 	marks: {
 		link: ({ value, children }) => {

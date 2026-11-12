@@ -4,7 +4,7 @@ How the vomatt UI is built. `PRODUCT.md` says why (users, brand, principles, acc
 
 ## Color
 
-Cool canvas, navy ink actions, two signals: Volt (`highlight`) marks what is yours, Tide marks what vomatt promises. The navy ink gives the lime a complementary hue, so the pairing reads as deliberate rather than loud; full-size ink-on-Volt appears once per screen, on the create action. Use the semantic tokens as Tailwind classes, never raw `oklch()`/hex values. Every token has a dark value in `.dark`, and the theme defaults to light. Night keeps Daylight's cool neutral (surfaces at chroma 0.012, never a navy canvas): cards lift by surface, lines stay one step quieter than in light, text is off-white, and Volt and Tide lose a little lightness so they sit in the picture instead of on it. The theme defaults to light: the root layout mounts `ThemeProvider` (next-themes, `defaultTheme="light"`), which puts `.dark` on `<html>`. People switch Light, Dark or Auto (follows `prefers-color-scheme`) from the sidebar's More menu.
+Cool canvas, navy ink actions, two signals: Volt (`highlight`) marks what is yours, Tide marks what vomatt promises. The navy ink gives the lime a complementary hue, so the pairing reads as deliberate rather than loud; full-size ink-on-Volt appears once per screen, on the create action. Use the semantic tokens as Tailwind classes, never raw `oklch()`/hex values. This site is light only: the app's dark theme (`.dark`) isn't in `global.css` here.
 
 | Role | Token | Use for |
 |---|---|---|
@@ -16,7 +16,7 @@ Cool canvas, navy ink actions, two signals: Volt (`highlight`) marks what is you
 | Quiet text | `muted-foreground` | Meta, hints, secondary copy |
 | Lines | `border`, `border-strong` | `border` for cards, rows and dividers; `border-strong` for outline buttons and pills at rest (hover fills them, the line stays) |
 | Controls | `input` | Text field borders, checkbox marks and switch tracks: the 3:1 boundary a control needs at rest |
-| Highlight (Volt) | `highlight`, `highlight-foreground`, `highlight-tint` | The create action (`Button variant="create"`: a Volt icon on ink in light, a Volt button in dark), the viewer's choice on a ballot (`highlight-tint` behind the chosen row, chosen or cast, and the `BallotMark`'s dot), the poll card's Voted pill, `YourVotePill` on results, the Seal's check, the You chip, selected text (`::selection`). Text on it is always `highlight-foreground` ink. Never decoration, never a notification |
+| Highlight (Volt) | `highlight`, `highlight-foreground`, `highlight-tint` | The create action (`Button variant="create"`: a Volt icon on ink), the viewer's choice on a ballot (`highlight-tint` behind the chosen row, chosen or cast, and the `BallotMark`'s dot), the poll card's Voted pill, `YourVotePill` on results, the Seal's check, the You chip, selected text (`::selection`). Text on it is always `highlight-foreground` ink. Never decoration, never a notification |
 | Alert | `alert`, `alert-foreground` | The unread count and `UnreadDot`: something asking to be looked at. White on red, so it reads as a notification. Never a button, a status or an error |
 | Tide | `tide`, `tide-tint`, `tide-line`, `tide-foreground` | The promise: the Seal after voting (`tide-tint` surface, `tide` ring, a Volt check, and Withdraw vote as a Tide-ink ghost button inside it), the ballot's lock line beside Vote, the rules ("How vomatt counts" in the sidebar, the poll page's About rules, the creator's rules summary), the voting-window bar (`Progress variant="tide"`). Never links, headers or hovers |
 | Poll status | `status-scheduled/open/closing/ended`, `status-open-ends` | Status chip tints, always with a text label. Closing is peach, the `avatar-peach` hue. On a poll card an Open or closing poll's chip is pink `status-open-ends` with no mark ("Ends Fri 18:00") |
@@ -32,7 +32,6 @@ Cool canvas, navy ink actions, two signals: Volt (`highlight`) marks what is you
 - Every title is weight 500: confident, not shouting.
 - Wrapping is set once in `global.css`: `h1`–`h4` balance their lines and `p`, `li`, `dd`, `blockquote` keep a lone word off the last line (`text-wrap-style`, so `truncate` and `whitespace-nowrap` still win). A title that isn't a heading element takes `text-balance`.
 - **Display**: the `display-heading` utility sets weight 500, leading 1.25 and -0.03em tracking; the size goes beside it.
-  - Page titles (Explore, Notifications, Settings): the `page-title` utility, 28px at every width with leading 1.3
   - CMS page titles: `display-heading text-[30px] md:text-[40px]`
   - Auth titles: 30px, leading 1.2, -0.02em (every auth step; in the auth dialog the step's title is the dialog's own 21px title)
   - Person names: `display-heading text-[26px] md:text-[30px]` on a profile; `text-2xl` elsewhere
@@ -103,7 +102,7 @@ If a building block doesn't fit, change its variant or add one. Don't override i
 
 ## Motion
 
-Motion is feedback, not decoration: ballot selection (`BallotMotion`), results counting up, the auth error sliding in, skeleton shimmer. `MotionProvider` sets `reducedMotion="user"`; CSS animations need their own `prefers-reduced-motion` fallback. No pulsing, no confetti, no backdrop blur over scrolling content (a modal's scrim, which stops the page, may blur it).
+Motion is feedback, not decoration: ballot selection (`BallotMotion`), results counting up, the auth error sliding in. `MotionProvider` sets `reducedMotion="user"`; CSS animations need their own `prefers-reduced-motion` fallback. No pulsing, no confetti, no backdrop blur over scrolling content (a modal's scrim, which stops the page, may blur it).
 
 ## Don'ts
 
