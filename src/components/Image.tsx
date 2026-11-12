@@ -1,10 +1,5 @@
-'use client';
-
 import type { SanityImageSource } from '@sanity/image-url';
-import clsx from 'clsx';
 import Image from 'next/image'; /* https://nextjs.org/docs/api-reference/next/image */
-import React, { useEffect, useRef, useState } from 'react';
-import { useInView } from 'react-intersection-observer';
 
 import { buildImageSrc } from '@/sanity/lib/image';
 
@@ -19,9 +14,6 @@ type ImgProps = {
 	image: ImgSource;
 	alt?: string;
 	className?: string;
-	responsiveImage?: SanityImageSource;
-	breakpoint?: number;
-	quality?: number;
 };
 
 function getSanityRefId(source: SanityImageSource) {
@@ -38,101 +30,33 @@ function getSanityRefId(source: SanityImageSource) {
 	return image._ref || image._id;
 }
 
+// An image asset's id carries its size: image-<hash>-<width>x<height>-<format>
 function getImageDimensions(id: string) {
-	const dimensions = id.split('-')[2];
-	const [width, height] = dimensions.split('x').map((num) => parseInt(num, 10));
-	const aspectRatio = width / height;
-
-	return { width, height, aspectRatio };
+	const size = id.match(/-(\d+)x(\d+)-/);
+	if (!size) return null;
+	const [width, height] = [Number(size[1]), Number(size[2])];
+	return { width, height, aspectRatio: width / height };
 }
 
-export default function Img({
-	image,
-	alt,
-	className,
-	responsiveImage,
-	breakpoint = 600,
-	quality = 80,
-}: ImgProps) {
-	const { ref, inView } = useInView({
-		triggerOnce: true,
-	});
-	const [isLoaded, setLoaded] = useState(false);
+// The widest an image is shown: the main column
+const SIZES = '(min-width: 712px) 680px, 100vw';
+
+export default function Img({ image, alt, className }: ImgProps) {
 	const imageId = getSanityRefId(image);
+	const dimensions = imageId ? getImageDimensions(imageId) : null;
+	// Not an image asset (or none): nothing to show
+	if (!dimensions) return null;
 
-	// get image dimension and src
-	const imageDimension = imageId
-		? getImageDimensions(imageId)
-		: { width: 0, height: 0, aspectRatio: 1 };
-	const aspectRatio = image.customRatio || imageDimension.aspectRatio;
-	const imageWidth = imageDimension.width;
-	const imageHeight = Math.round(imageWidth / aspectRatio);
-	const src = buildImageSrc(image, {
-		width: inView ? imageWidth : 100,
-		height: inView ? imageHeight : Math.round(100 / aspectRatio),
-		quality,
-	});
-	const responsiveImageSrc = buildImageSrc(responsiveImage, {
-		quality,
-	});
-
-	// get rendered dimension, to set size=""
-	const pictureRef = useRef<HTMLPictureElement>(null);
-	const [renderedDimensions, setRenderedDimensions] = useState({
-		width: 0,
-		height: 0,
-	});
-
-	useEffect(() => {
-		if (inView && pictureRef.current) {
-			setRenderedDimensions({
-				width: pictureRef.current.offsetWidth,
-				height: pictureRef.current.offsetHeight,
-			});
-		}
-	}, [inView]);
-
-	if (!image || !imageId || !src) {
-		return false;
-	}
+	const aspectRatio = image.customRatio || dimensions.aspectRatio;
+	const width = dimensions.width;
+	const height = Math.round(width / aspectRatio);
+	// Full quality from Sanity, so next/image's is the only lossy pass
+	const src = buildImageSrc(image, { width, height, quality: 100 });
+	if (!src) return null;
 
 	return (
-		<picture ref={pictureRef} className={className}>
-			{responsiveImageSrc && (
-				<>
-					<source
-						media={`(min-width: ${breakpoint + 1}px)`}
-						width={imageWidth}
-						height={imageHeight}
-						srcSet={src}
-					/>
-
-					<source
-						media={`(max-width: ${breakpoint}px)`}
-						width={imageWidth}
-						height={imageHeight}
-						srcSet={responsiveImageSrc}
-					/>
-				</>
-			)}
-			<Image
-				ref={ref}
-				width={imageWidth}
-				height={imageHeight}
-				sizes={inView ? `${renderedDimensions.width}px` : '0vw'}
-				src={src}
-				quality={quality}
-				alt={alt || image.alt || 'image'}
-				{...(inView && {
-					onLoad: () => {
-						setLoaded(true);
-					},
-				})}
-				className={clsx({
-					lazyload: !isLoaded,
-					lazyloaded: isLoaded,
-				})}
-			/>
+		<picture className={className}>
+			<Image width={width} height={height} sizes={SIZES} src={src} alt={alt || image.alt || ''} />
 		</picture>
 	);
 }

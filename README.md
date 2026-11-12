@@ -1,6 +1,6 @@
 # vomatt-about
 
-The marketing site at about.vomatt.com: About, Privacy, Terms and Cookies. Content comes from the same Sanity project as vomatt.com and is edited in the vomatt-admin Studio.
+The marketing site at about.vomatt.com: the homepage, About, Contact, Privacy and Terms. Content comes from the same Sanity project as vomatt.com and is edited in the vomatt-admin Studio.
 
 ## Getting started
 
