@@ -37,8 +37,6 @@ export type Messages = {
 		policy: string;
 		accept: string;
 		decline: string;
-		settings: string;
-		settingsOff: string;
 	};
 	home: {
 		/** The one poll the homepage follows; options pair with POLL_RESULTS by index. */
@@ -118,8 +116,6 @@ export const MESSAGES: Record<Locale, Messages> = {
 			policy: 'Privacy Policy',
 			accept: 'Accept analytics',
 			decline: 'Decline',
-			settings: 'Cookie settings',
-			settingsOff: 'Analytics is off, so no analytics cookies are set and there’s nothing to change.',
 		},
 		home: {
 			poll: {
@@ -198,8 +194,6 @@ export const MESSAGES: Record<Locale, Messages> = {
 			policy: '隱私權政策',
 			accept: '接受分析',
 			decline: '拒絕',
-			settings: 'Cookie 設定',
-			settingsOff: '分析功能目前已關閉，因此不會設定分析 Cookie，也沒有需要變更的選項。',
 		},
 		home: {
 			poll: {

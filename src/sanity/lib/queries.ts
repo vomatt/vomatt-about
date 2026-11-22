@@ -176,7 +176,6 @@ export const pageGeneralQuery = defineQuery(`
 		_updatedAt,
 		layout,
 		showLastUpdated,
-		showCookieSettings,
 		content[]{
 			${portableTextContentFields}
 		},
