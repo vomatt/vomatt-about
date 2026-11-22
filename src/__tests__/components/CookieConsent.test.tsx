@@ -4,7 +4,7 @@ jest.mock('@/components/HeadTrackingCode', () => ({
 	HeadTrackingCode: () => <div data-testid="tracking" />,
 }));
 
-import { consentCookie, CookieConsent, CookieSettingsButton } from '@/components/CookieConsent';
+import { consentCookie, CookieConsent } from '@/components/CookieConsent';
 
 const integrations = { gaIDs: ['G-TEST'] };
 
@@ -51,28 +51,6 @@ describe('CookieConsent', () => {
 		document.cookie = 'cookie-consent=granted; path=/';
 		render(<CookieConsent locale="en" integrations={integrations} />);
 		expect(screen.getByTestId('tracking')).toBeInTheDocument();
-	});
-});
-
-describe('CookieSettingsButton', () => {
-	it('shows the banner again after a Decline', () => {
-		document.cookie = 'cookie-consent=denied; path=/';
-		render(
-			<>
-				<CookieConsent locale="en" integrations={integrations} />
-				<CookieSettingsButton locale="en" integrations={integrations} />
-			</>
-		);
-		expect(screen.queryByRole('button', { name: /accept/i })).not.toBeInTheDocument();
-		fireEvent.click(screen.getByRole('button', { name: /cookie settings/i }));
-		expect(screen.getByRole('button', { name: /accept/i })).toBeInTheDocument();
-	});
-
-	it('is disabled, and says why, while no analytics ID is set', () => {
-		render(<CookieSettingsButton locale="en" integrations={{ gaIDs: [], gtmIDs: null }} />);
-		const button = screen.getByRole('button', { name: /cookie settings/i });
-		expect(button).toBeDisabled();
-		expect(button).toHaveAccessibleDescription(/no analytics cookies are set/);
 	});
 });
 

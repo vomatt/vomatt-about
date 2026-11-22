@@ -2,12 +2,10 @@ import type { Metadata, ResolvingMetadata } from 'next';
 import { notFound } from 'next/navigation';
 
 import { BrandMark } from '@/components/BrandMark';
-import { CookieSettingsButton } from '@/components/CookieConsent';
 import PageGeneral from '@/components/PageGeneral';
 import { getLocale } from '@/i18n/server';
 import defineMetadata from '@/lib/defineMetadata';
 import { MOVED_PAGES } from '@/lib/movedPages';
-import { getSiteSettings } from '@/lib/siteSettings';
 import { sanityFetch } from '@/sanity/lib/live';
 import { localeParams, pageGeneralQuery, pageGeneralSlugsQuery } from '@/sanity/lib/queries';
 
@@ -43,15 +41,11 @@ export default async function PageSlugRoute({ params }: PageProps<'/[locale]/[sl
 	const isAbout = slug === 'about';
 	const data = await getPage(slug);
 	if (!data) notFound();
-	// The page that lists the cookies turns this on in Sanity, so the choice can be changed there
-	const settings = data.showCookieSettings ? await getSiteSettings() : null;
 
 	return (
 		<>
 			{isAbout && <BrandMark className="mb-8" />}
-			<PageGeneral data={data}>
-				{data.showCookieSettings && <CookieSettingsButton locale={data.language} integrations={settings?.integrations} />}
-			</PageGeneral>
+			<PageGeneral data={data} />
 		</>
 	);
 }

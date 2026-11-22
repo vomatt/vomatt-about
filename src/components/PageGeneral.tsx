@@ -1,5 +1,3 @@
-import { ReactNode } from 'react';
-
 import CustomPortableText from '@/components/CustomPortableText';
 import PageModules, { type PageModule } from '@/components/PageModules';
 import { type Locale, LOCALES, locales } from '@/i18n/locales';
@@ -20,7 +18,7 @@ const lastUpdatedFormat = Object.fromEntries(
 
 /** A Sanity page, in the language it's written in (the fallback's when the URL's has no translation). */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export default function PageGeneral({ data, children }: { data: any; children?: ReactNode }) {
+export default function PageGeneral({ data }: { data: any }) {
 	const { title, layout, content, pageModules: modules, showLastUpdated, _updatedAt } = data;
 	const language: Locale = data.language;
 	const lang = LOCALES[language].htmlLang;
@@ -36,7 +34,6 @@ export default function PageGeneral({ data, children }: { data: any; children?: 
 					</p>
 				)}
 				<div className="cms-prose text-lg">{content && <CustomPortableText blocks={content} />}</div>
-				{children}
 			</article>
 		);
 	}
@@ -50,7 +47,6 @@ export default function PageGeneral({ data, children }: { data: any; children?: 
 			{modules?.map((module: PageModule) => (
 				<PageModules key={module._key} module={module} />
 			))}
-			{children}
 		</div>
 	);
 }

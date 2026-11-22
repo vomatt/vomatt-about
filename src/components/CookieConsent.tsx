@@ -74,34 +74,3 @@ export function CookieConsent({ locale, integrations }: { locale: Locale; integr
 		</section>
 	);
 }
-
-/** Clears the saved choice so the banner asks again; reloads if analytics already ran. Disabled, with a note, while analytics is off. */
-export function CookieSettingsButton({ locale, integrations }: { locale: Locale; integrations?: Integrations | null }) {
-	const reopen = () => {
-		const wasGranted = readConsent() === 'granted';
-		document.cookie = consentCookie('', window.location.hostname);
-		if (wasGranted) window.location.reload();
-		else listeners.forEach((listener) => listener());
-	};
-
-	const copy = MESSAGES[locale].cookies;
-	const off = !hasAnalytics(integrations);
-	return (
-		<div className="mt-8">
-			<button
-				type="button"
-				className={buttonVariants({ variant: 'outline' })}
-				onClick={reopen}
-				disabled={off}
-				aria-describedby={off ? 'cookie-settings-off' : undefined}
-			>
-				{copy.settings}
-			</button>
-			{off && (
-				<p id="cookie-settings-off" className="mt-2 text-sm text-muted-foreground">
-					{copy.settingsOff}
-				</p>
-			)}
-		</div>
-	);
-}
