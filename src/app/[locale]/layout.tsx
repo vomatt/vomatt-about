@@ -1,6 +1,7 @@
 import '@/styles/global.css';
 
 import type { SanityImageSource } from '@sanity/image-url';
+import { Analytics } from '@vercel/analytics/next';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 
@@ -25,8 +26,13 @@ export function generateStaticParams() {
 export async function generateMetadata(): Promise<Metadata> {
 	const locale = await getLocale();
 	const data = await getSiteSettings();
-	const { siteTitle = '', favicon, faviconLight, shareGraphic, shareVideo } =
-		data || {};
+	const {
+		siteTitle = '',
+		favicon,
+		faviconLight,
+		shareGraphic,
+		shareVideo,
+	} = data || {};
 
 	const faviconUrl = (icon: SanityImageSource) =>
 		imageBuilder.image(icon).width(256).height(256).url();
@@ -74,9 +80,14 @@ export async function generateMetadata(): Promise<Metadata> {
 	};
 }
 
-export default async function RootLayout({ children }: LayoutProps<'/[locale]'>) {
+export default async function RootLayout({
+	children,
+}: LayoutProps<'/[locale]'>) {
 	const locale = await getLocale();
-	const [settings, written] = await Promise.all([getSiteSettings(), getOtherLanguagePaths(locale)]);
+	const [settings, written] = await Promise.all([
+		getSiteSettings(),
+		getOtherLanguagePaths(locale),
+	]);
 
 	return (
 		<html
@@ -91,6 +102,7 @@ export default async function RootLayout({ children }: LayoutProps<'/[locale]'>)
 				</main>
 				<SiteFooter locale={locale} written={written} />
 				<CookieConsent locale={locale} integrations={settings?.integrations} />
+				<Analytics />
 			</body>
 		</html>
 	);
